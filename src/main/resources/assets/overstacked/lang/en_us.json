@@ -1,0 +1,24 @@
+{
+  "key.overstacked.config": "Overstacked Settings",
+
+  "category.overstacked.general": "General Settings",
+  "category.overstacked.overrides": "Unstackable Item Overrides",
+  "category.overstacked.advanced": "Advanced Rules & Disk",
+  "category.overstacked.itemToggles": "Item group toggles",
+
+  "option.overstacked.defaultMaxStackSize": "Default Max Stack Size",
+  "option.overstacked.stackEnchantedBooks": "Stack Enchanted Books",
+  "option.overstacked.stackEnderPearls": "Stack Ender Pearls & Snowballs",
+  "option.overstacked.stackBucketsPotions": "Stack Buckets & Potions",
+  "option.overstacked.stackTotems": "Stack Totems of Undying",
+  "option.overstacked.stackToolsArmor": "Stack Tools & Armor",
+  "option.overstacked.reloadInfo": "XML/JSON disk rules are automatically reloaded every time you save. Edit config/overstacked-rules.xml and config/overstacked-template-overrides.json for fine-tuning.",
+  "option.overstacked.overridesInfo": "Item overrides: %1$s  |  Tag overrides: %2$s",
+
+  "tooltip.overstacked.defaultMaxStackSize": "Maximum stack size for all items. Individual items can override this via XML/JSON rules.\nRange: 1 to 1,000,000,000.",
+  "tooltip.overstacked.stackEnchantedBooks": "Allow enchanted books to stack. Books with different enchantments will NOT merge into the same stack (enforced by vanilla component system).",
+  "tooltip.overstacked.stackEnderPearls": "Allow ender pearls, snowballs, eggs, and ender eyes to stack above their vanilla limit.",
+  "tooltip.overstacked.stackBucketsPotions": "Allow buckets, water/lava buckets, milk, and all potion types to stack above their vanilla limit.",
+  "tooltip.overstacked.stackTotems": "Allow totems of undying to stack above 1.",
+  "tooltip.overstacked.stackToolsArmor": "Allow tools, weapons, and armor to stack above 1.\n\u00a7cWARNING: Stacking damageable items may cause durability sync glitches on some servers!"
+}

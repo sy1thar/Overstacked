@@ -1,0 +1,24 @@
+{
+  "key.overstacked.config": "Настройки Overstacked",
+
+  "category.overstacked.general": "Основные настройки",
+  "category.overstacked.overrides": "Переопределения нестакуемых предметов",
+  "category.overstacked.advanced": "Расширенные правила и диск",
+  "category.overstacked.itemToggles": "Группы предметов",
+
+  "option.overstacked.defaultMaxStackSize": "Макс. размер стака по умолчанию",
+  "option.overstacked.stackEnchantedBooks": "Стакать зачарованные книги",
+  "option.overstacked.stackEnderPearls": "Стакать эндер-жемчуг и снежки",
+  "option.overstacked.stackBucketsPotions": "Стакать вёдра и зелья",
+  "option.overstacked.stackTotems": "Стакать тотемы бессмертия",
+  "option.overstacked.stackToolsArmor": "Стакать инструменты и броню",
+  "option.overstacked.reloadInfo": "Правила XML/JSON автоматически перезагружаются при каждом сохранении. Редактируйте config/overstacked-rules.xml и config/overstacked-template-overrides.json для тонкой настройки.",
+  "option.overstacked.overridesInfo": "Переопределения предметов: %1$s  |  Переопределения тегов: %2$s",
+
+  "tooltip.overstacked.defaultMaxStackSize": "Максимальный размер стака для всех предметов. Отдельные предметы могут переопределять это значение через правила XML/JSON.\nДиапазон: от 1 до 1 000 000 000.",
+  "tooltip.overstacked.stackEnchantedBooks": "Разрешить стакать зачарованные книги. Книги с разными зачарованиями НЕ будут объединяться в один стак (ограничение ванильной системы компонентов).",
+  "tooltip.overstacked.stackEnderPearls": "Разрешить эндер-жемчугу, снежкам, яйцам и окам эндера стакаться сверх ванильного лимита.",
+  "tooltip.overstacked.stackBucketsPotions": "Разрешить вёдрам, водным/лавовым вёдрам, молоку и всем типам зелий стакаться сверх ванильного лимита.",
+  "tooltip.overstacked.stackTotems": "Разрешить тотемам бессмертия стакаться больше 1.",
+  "tooltip.overstacked.stackToolsArmor": "Разрешить инструментам, оружию и броне стакаться больше 1.\n\u00a7cВНИМАНИЕ: Стакание ломающихся предметов может вызвать глитчи синхронизации прочности на некоторых серверах!"
+}

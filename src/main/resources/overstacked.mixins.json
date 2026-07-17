@@ -1,0 +1,24 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.overstacked.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "ItemMaxStackSizeMixin",
+        "ItemStackMaxCountMixin",
+        "ItemStackPacketCodecMixin",
+        "ItemStackEncodeMixin",
+        "SlotMaxCountMixin",
+        "InventoryMaxCountMixin",
+        "ScreenHandlerSafeOpsMixin",
+        "ItemEntityMergeMixin",
+        "ItemScattererMixin"
+    ],
+    "client": [
+        "DrawContextCountMixin",
+        "ItemStackTooltipMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

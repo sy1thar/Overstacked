@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Overstacked Rules Engine
+    ========================
+    Per-item and per-tag stack rules.
+    The default max stack size is configured via ModMenu GUI (config/overstacked.json).
+
+    Target format:
+      - Item ID:   "minecraft:diamond"
+      - Tag:       "#minecraft:swords"   (prefix with #)
+-->
+<overstacked>
+    <rules>
+        <rule>
+            <target>#minecraft:swords</target>
+            <maxStack>16</maxStack>
+        </rule>
+        <rule>
+            <target>minecraft:diamond</target>
+            <maxStack>64000</maxStack>
+        </rule>
+    </rules>
+</overstacked>

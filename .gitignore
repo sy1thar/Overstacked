@@ -1,0 +1,26 @@
+# Gradle build output
+.gradle/
+build/
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug / scratch files
+IER_bytecode.txt
+me/
+net/
+
+# Runtime output
+logs/
+run/

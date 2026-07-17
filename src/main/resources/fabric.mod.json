@@ -1,0 +1,35 @@
+{
+    "schemaVersion": 1,
+    "id": "overstacked",
+    "version": "${version}",
+    "name": "Overstacked",
+    "description": "Overhaul item stack sizes up to 1 billion per slot. Supports normally unstackable items, XML rule engine, JSON template overrides, and dedicated server sync.",
+    "authors": [
+        "Overstacked"
+    ],
+    "contact": {},
+    "license": "MIT",
+    "icon": "assets/overstacked/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.overstacked.Overstacked"
+        ],
+        "modmenu": [
+            "com.overstacked.client.OverstackedModMenu"
+        ]
+    },
+    "mixins": [
+        "overstacked.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.16.0",
+        "fabric-api": "*",
+        "minecraft": "~1.21.1",
+        "java": ">=21"
+    },
+    "suggests": {
+        "cloth-config2": "*",
+        "modmenu": "*"
+    }
+}
