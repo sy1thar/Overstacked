@@ -7,7 +7,7 @@
         "ItemMaxStackSizeMixin",
         "ItemStackMaxCountMixin",
         "ItemStackPacketCodecMixin",
-        "ItemStackEncodeMixin",
+        "ItemStackCodecFixMixin",
         "SlotMaxCountMixin",
         "InventoryMaxCountMixin",
         "ScreenHandlerSafeOpsMixin",
