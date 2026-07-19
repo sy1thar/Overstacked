@@ -20,23 +20,21 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.overstacked.config.OverstackedConfig;
-
 /**
  * Fixes item deletion caused by vanilla Codec validation on large stacks.
  *
- * ROOT CAUSE:
- * 1. ItemStack.CODEC encodes count with Codecs.rangedInt(1, 99).
- *    Any stack with count > 99 fails encode/decode → item silently deleted.
- * 2. ItemStack.validate() checks getCount() > getMaxCount() and returns
- *    DataResult.error → VALIDATED_CODEC rejects the stack.
+ * ItemStack has 4 static Codec fields:
+ *   CODEC                   — 2-field: {id, components}. NO count. Used by fromNbt() and encode().
+ *   UNCOUNTED_CODEC         — 3-field: {id, count(rangedInt 1-99), components}. Has count.
+ *   VALIDATED_CODEC         — CODEC.validate(ItemStack::validate)
+ *   VALIDATED_UNCOUNTED_CODEC — UNCOUNTED_CODEC.validate(ItemStack::validate)
+ *
+ * validate() checks: getCount() > getMaxCount() → DataResult.error → item deleted.
  *
  * FIX:
- * A. Replace CODEC at class init with a wrapper that intercepts encode/decode.
- *    On decode: read raw count from NBT, set count=1 in NBT copy, decode,
- *    then restore real count on the resulting ItemStack.
- *    On encode: set count=1, encode via original, then write real count to output.
- * B. Bypass validate() count check (keep component validation intact).
+ * 1. Replace all 4 codecs at <clinit> RETURN with wrappers that handle count > 99.
+ * 2. Bypass validate() count check entirely (keep component validation).
+ * 3. Safety net on encode() methods.
  */
 @Mixin(value = ItemStack.class, priority = 1500)
 public abstract class ItemStackCodecFixMixin {
@@ -45,7 +43,13 @@ public abstract class ItemStackCodecFixMixin {
     private static Codec<ItemStack> CODEC;
 
     @Shadow @Mutable
+    private static Codec<ItemStack> UNCOUNTED_CODEC;
+
+    @Shadow @Mutable
     private static Codec<ItemStack> VALIDATED_CODEC;
+
+    @Shadow @Mutable
+    private static Codec<ItemStack> VALIDATED_UNCOUNTED_CODEC;
 
     @Shadow
     private static Logger LOGGER;
@@ -58,15 +62,26 @@ public abstract class ItemStackCodecFixMixin {
             net.minecraft.component.ComponentMap components) { return null; }
 
     /**
-     * Phase 1: Replace CODEC after vanilla static init completes.
-     * The original CODEC uses rangedInt(1,99) for count — we wrap it with
-     * a codec that intercepts encode/decode to handle counts up to 1 billion.
+     * Phase 1: Replace ALL 4 codecs after vanilla static init completes.
+     * CODEC has no count field (2-field), but we wrap it for safety.
+     * UNCOUNTED_CODEC has count with rangedInt(1,99) — this is the critical one.
+     * Both VALIDATED_* codecs are rebuilt from the new wrapped codecs.
      */
     @Inject(method = "<clinit>", at = @At("RETURN"))
-    private static void overstacked$replaceCodec(CallbackInfo ci) {
-        final Codec<ItemStack> original = CODEC;
+    private static void overstacked$replaceCodecs(CallbackInfo ci) {
+        final Codec<ItemStack> originalCodec = CODEC;
+        final Codec<ItemStack> originalUncounted = UNCOUNTED_CODEC;
 
-        CODEC = new Codec<ItemStack>() {
+        CODEC = overstacked$wrapCodec(originalCodec, "CODEC");
+        UNCOUNTED_CODEC = overstacked$wrapCodec(originalUncounted, "UNCOUNTED_CODEC");
+
+        VALIDATED_CODEC = CODEC.validate(ItemStackCodecFixMixin::validate);
+        VALIDATED_UNCOUNTED_CODEC = UNCOUNTED_CODEC.validate(ItemStackCodecFixMixin::validate);
+    }
+
+    @Unique
+    private static Codec<ItemStack> overstacked$wrapCodec(Codec<ItemStack> original, String name) {
+        return new Codec<ItemStack>() {
             @Override
             public <V> DataResult<V> encode(ItemStack input, DynamicOps<V> ops, V prefix) {
                 int originalCount = input.getCount();
@@ -108,25 +123,20 @@ public abstract class ItemStackCodecFixMixin {
 
             @Override
             public String toString() {
-                return "OverstackedCODEC[" + original + "]";
+                return "OverstackedCodec[" + name + "=" + original + "]";
             }
         };
-
-        VALIDATED_CODEC = CODEC.validate(ItemStackCodecFixMixin::validate);
     }
 
     /**
-     * Phase 2: Bypass validate() count check.
+     * Phase 2: Bypass validate() count check entirely.
      * validate() does: if (getCount() > getMaxCount()) return error
-     * We keep component validation (MAX_DAMAGE etc.) but skip count validation
-     * since our config allows large counts.
+     * We keep component validation (MAX_DAMAGE etc.) but skip count validation.
+     * NO isLoaded() guard — this must work from JVM launch before config loads.
      */
     @Inject(method = "validate", at = @At("HEAD"), cancellable = true)
     private static void overstacked$bypassCountValidation(
             ItemStack stack, CallbackInfoReturnable<DataResult<ItemStack>> cir) {
-        OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
-
         DataResult<net.minecraft.util.Unit> componentResult =
                 validateComponents(stack.getComponents());
         if (componentResult.isError()) {

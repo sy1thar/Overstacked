@@ -9,17 +9,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Overrides {@link Item#getMaxCount()} to return the value from
- * our XML/JSON configuration instead of the vanilla default (64).
+ * our configuration instead of the vanilla default (64).
+ * NO isLoaded() guard — returns hardcoded default (1B) before config loads.
  */
 @Mixin(Item.class)
 public abstract class ItemMaxStackSizeMixin {
 
+    private static final int OVERSTACKED_DEFAULT = 1_000_000_000;
+
     @Inject(method = "getMaxCount", at = @At("RETURN"), cancellable = true)
     private void overstacked$overrideMaxCount(CallbackInfoReturnable<Integer> cir) {
         OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
 
-        Item self = (Item) (Object) this;
-        cir.setReturnValue(config.getMaxStackSize(self));
+        int max;
+        if (config.isLoaded()) {
+            Item self = (Item) (Object) this;
+            max = config.getMaxStackSize(self);
+        } else {
+            max = OVERSTACKED_DEFAULT;
+        }
+
+        cir.setReturnValue(max);
     }
 }
