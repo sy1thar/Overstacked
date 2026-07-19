@@ -14,15 +14,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Inventory.class)
 public interface InventoryMaxCountMixin {
 
-    int OVERSTACKED_DEFAULT = 1_000_000_000;
-
     @Inject(method = "getMaxCountPerStack", at = @At("RETURN"), cancellable = true)
     private void overstacked$overrideMaxCountPerStack(CallbackInfoReturnable<Integer> cir) {
         OverstackedConfig config = OverstackedConfig.getInstance();
         if (config.isLoaded()) {
             cir.setReturnValue(config.getDefaultMaxStackSize());
         } else {
-            cir.setReturnValue(OVERSTACKED_DEFAULT);
+            cir.setReturnValue(1_000_000_000);
         }
     }
 }
