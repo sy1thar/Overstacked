@@ -1,25 +1,24 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "com.overstacked.mixin",
-    "compatibilityLevel": "JAVA_21",
-    "mixins": [
-        "ItemMaxStackSizeMixin",
-        "ItemStackMaxCountMixin",
-        "ItemStackPacketCodecMixin",
-        "ItemStackCodecFixMixin",
-        "FromNbtSafetyMixin",
-        "SlotMaxCountMixin",
-        "InventoryMaxCountMixin",
-        "ScreenHandlerSafeOpsMixin",
-        "ItemEntityMergeMixin",
-        "ItemScattererMixin"
-    ],
-    "client": [
-        "DrawContextCountMixin",
-        "ItemStackTooltipMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "package": "com.overstacked.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "FromNbtSafetyMixin",
+    "InventoryMaxCountMixin",
+    "ItemEntityMergeMixin",
+    "ItemMaxStackSizeMixin",
+    "ItemScattererMixin",
+    "ItemStackCodecFixMixin",
+    "ItemStackMaxCountMixin",
+    "ItemStackPacketCodecMixin",
+    "ScreenHandlerSafeOpsMixin",
+    "SlotMaxCountMixin"
+  ],
+  "client": [
+    "DrawContextCountMixin",
+    "ItemStackTooltipMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
