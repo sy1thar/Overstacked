@@ -8,10 +8,15 @@ import com.google.gson.JsonObject;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ArmorItem;
+import net.minecraft.item.FishingRodItem;
+import net.minecraft.item.FlintAndSteelItem;
+import net.minecraft.item.MaceItem;
 import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.item.ShearsItem;
 import net.minecraft.item.ShieldItem;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.ToolItem;
+import net.minecraft.item.TridentItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -305,10 +310,16 @@ public final class OverstackedConfig {
     private static boolean isWeaponOrTool(Item item) {
         if (item instanceof SwordItem || item instanceof ToolItem ||
             item instanceof ArmorItem || item instanceof RangedWeaponItem ||
-            item instanceof ShieldItem) {
+            item instanceof ShieldItem || item instanceof TridentItem ||
+            item instanceof FishingRodItem || item instanceof ShearsItem ||
+            item instanceof FlintAndSteelItem) {
             return true;
         }
         RegistryEntry.Reference<Item> ref = item.getRegistryEntry();
-        return ref.isIn(ENCHANTABLE_WEAPON) || ref.isIn(ENCHANTABLE_DURABILITY) || ref.isIn(ENCHANTABLE_MINING);
+        if (ref.isIn(ENCHANTABLE_WEAPON) || ref.isIn(ENCHANTABLE_DURABILITY) || ref.isIn(ENCHANTABLE_MINING)) {
+            return true;
+        }
+        if (item.getComponents().contains(DataComponentTypes.MAX_DAMAGE)) return true;
+        return false;
     }
 }
