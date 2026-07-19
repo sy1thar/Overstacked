@@ -7,6 +7,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.Item;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.RangedWeaponItem;
+import net.minecraft.item.ShieldItem;
+import net.minecraft.item.SwordItem;
+import net.minecraft.item.ToolItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -54,6 +59,10 @@ public final class OverstackedConfig {
             "minecraft:lingering_potion"
     );
     private static final Set<String> TOTEM_GROUP = Set.of("minecraft:totem_of_undying");
+
+    private static final TagKey<Item> ENCHANTABLE_WEAPON = TagKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "enchantable/weapon"));
+    private static final TagKey<Item> ENCHANTABLE_DURABILITY = TagKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "enchantable/durability"));
+    private static final TagKey<Item> ENCHANTABLE_MINING = TagKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "enchantable/mining"));
 
     private OverstackedConfig() {}
 
@@ -212,6 +221,8 @@ public final class OverstackedConfig {
             } catch (Exception ignored) {}
         }
 
+        if (!stackToolsArmor && isWeaponOrTool(item)) return 1;
+
         int vanillaMax = getVanillaMaxCount(item);
 
         if (vanillaMax == 1) {
@@ -289,5 +300,15 @@ public final class OverstackedConfig {
         } catch (IOException e) {
             Overstacked.LOGGER.error("[Overstacked] I/O error loading {}", target, e);
         }
+    }
+
+    private static boolean isWeaponOrTool(Item item) {
+        if (item instanceof SwordItem || item instanceof ToolItem ||
+            item instanceof ArmorItem || item instanceof RangedWeaponItem ||
+            item instanceof ShieldItem) {
+            return true;
+        }
+        RegistryEntry.Reference<Item> ref = item.getRegistryEntry();
+        return ref.isIn(ENCHANTABLE_WEAPON) || ref.isIn(ENCHANTABLE_DURABILITY) || ref.isIn(ENCHANTABLE_MINING);
     }
 }

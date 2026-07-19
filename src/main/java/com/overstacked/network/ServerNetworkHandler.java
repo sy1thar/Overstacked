@@ -22,10 +22,15 @@ public final class ServerNetworkHandler {
             config.clearItemOverrides();
             config.clearTagOverrides();
             config.reloadDiskRules();
+
+            payload.itemOverrides().forEach(config::addItemOverride);
+            payload.tagOverrides().forEach(config::addTagOverride);
+
             config.saveToDisk();
 
-            Overstacked.LOGGER.info("[Overstacked] Menu submit from {}: defaultMax={}",
-                    player.getName().getString(), payload.defaultMaxStackSize());
+            Overstacked.LOGGER.info("[Overstacked] Menu submit from {}: defaultMax={}, itemOverrides={}, tagOverrides={}",
+                    player.getName().getString(), payload.defaultMaxStackSize(),
+                    payload.itemOverrides().size(), payload.tagOverrides().size());
 
             ConfigSyncPayload syncPayload = config.toPayload();
             context.server().getPlayerManager().getPlayerList().forEach(p ->

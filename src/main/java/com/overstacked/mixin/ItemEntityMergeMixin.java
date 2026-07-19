@@ -14,7 +14,6 @@ public abstract class ItemEntityMergeMixin {
     @Inject(method = "canMerge", at = @At("HEAD"), cancellable = true)
     private void overstacked$preventLargeStackMerge(CallbackInfoReturnable<Boolean> cir) {
         OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
 
         ItemEntity self = (ItemEntity) (Object) this;
         ItemStack stack = self.getStack();
@@ -29,7 +28,6 @@ public abstract class ItemEntityMergeMixin {
             at = @At("HEAD"), cancellable = true)
     private static void overstacked$preventLargeStackMergeStatic(ItemStack a, ItemStack b, CallbackInfoReturnable<Boolean> cir) {
         OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
 
         int vanillaMax = OverstackedConfig.getVanillaMaxCount(a.getItem());
 

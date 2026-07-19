@@ -19,7 +19,6 @@ public abstract class ItemStackTooltipMixin {
     @Inject(method = "getTooltip", at = @At("RETURN"))
     private void overstacked$addExactCount(Item.TooltipContext context, PlayerEntity player, TooltipType tooltipType, CallbackInfoReturnable<List<Text>> cir) {
         OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
 
         ItemStack self = (ItemStack) (Object) this;
         int count = self.getCount();

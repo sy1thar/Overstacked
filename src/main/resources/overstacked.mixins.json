@@ -8,6 +8,7 @@
         "ItemStackMaxCountMixin",
         "ItemStackPacketCodecMixin",
         "ItemStackCodecFixMixin",
+        "FromNbtSafetyMixin",
         "SlotMaxCountMixin",
         "InventoryMaxCountMixin",
         "ScreenHandlerSafeOpsMixin",

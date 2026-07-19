@@ -104,7 +104,7 @@ public abstract class ItemStackCodecFixMixin {
 
             @Override
             public <V> DataResult<Pair<ItemStack, V>> decode(DynamicOps<V> ops, V input) {
-                int count = overstacked$extractCount(ops, input);
+                int count = Math.max(1, overstacked$extractCount(ops, input));
 
                 if (count <= 99) {
                     return original.decode(ops, input);

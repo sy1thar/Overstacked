@@ -14,7 +14,6 @@ public abstract class SlotMaxCountMixin {
     @Inject(method = "getMaxItemCount", at = @At("RETURN"), cancellable = true)
     private void overstacked$overrideMaxItemCount(CallbackInfoReturnable<Integer> cir) {
         OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
 
         Slot self = (Slot) (Object) this;
         ItemStack stack = self.getStack();

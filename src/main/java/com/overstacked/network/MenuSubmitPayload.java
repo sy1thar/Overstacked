@@ -5,13 +5,18 @@ import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 public record MenuSubmitPayload(
         int defaultMaxStackSize,
         boolean stackEnchantedBooks,
         boolean stackEnderPearlsSnowballs,
         boolean stackBucketsPotions,
         boolean stackTotems,
-        boolean stackToolsArmor
+        boolean stackToolsArmor,
+        Map<String, Integer> itemOverrides,
+        Map<String, Integer> tagOverrides
 ) implements CustomPayload {
 
     public static final CustomPayload.Id<MenuSubmitPayload> ID =
@@ -21,11 +26,26 @@ public record MenuSubmitPayload(
             new PacketCodec<>() {
                 @Override
                 public MenuSubmitPayload decode(PacketByteBuf buf) {
-                    return new MenuSubmitPayload(
-                            buf.readInt(),
-                            buf.readBoolean(), buf.readBoolean(),
-                            buf.readBoolean(), buf.readBoolean(),
-                            buf.readBoolean());
+                    int defaultMax = buf.readInt();
+                    boolean eb  = buf.readBoolean();
+                    boolean eps = buf.readBoolean();
+                    boolean bp  = buf.readBoolean();
+                    boolean tot = buf.readBoolean();
+                    boolean ta  = buf.readBoolean();
+
+                    int itemCount = buf.readVarInt();
+                    Map<String, Integer> items = new LinkedHashMap<>(itemCount);
+                    for (int i = 0; i < itemCount; i++) {
+                        items.put(buf.readString(), buf.readVarInt());
+                    }
+
+                    int tagCount = buf.readVarInt();
+                    Map<String, Integer> tags = new LinkedHashMap<>(tagCount);
+                    for (int i = 0; i < tagCount; i++) {
+                        tags.put(buf.readString(), buf.readVarInt());
+                    }
+
+                    return new MenuSubmitPayload(defaultMax, eb, eps, bp, tot, ta, items, tags);
                 }
 
                 @Override
@@ -36,6 +56,18 @@ public record MenuSubmitPayload(
                     buf.writeBoolean(payload.stackBucketsPotions);
                     buf.writeBoolean(payload.stackTotems);
                     buf.writeBoolean(payload.stackToolsArmor);
+
+                    buf.writeVarInt(payload.itemOverrides.size());
+                    payload.itemOverrides.forEach((key, value) -> {
+                        buf.writeString(key);
+                        buf.writeVarInt(value);
+                    });
+
+                    buf.writeVarInt(payload.tagOverrides.size());
+                    payload.tagOverrides.forEach((key, value) -> {
+                        buf.writeString(key);
+                        buf.writeVarInt(value);
+                    });
                 }
             };
 

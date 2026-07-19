@@ -1,6 +1,5 @@
 package com.overstacked.mixin;
 
-import com.overstacked.config.OverstackedConfig;
 import com.overstacked.util.NumberFormatUtil;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -43,8 +42,6 @@ public abstract class DrawContextCountMixin {
             )
     )
     private String overstacked$formatCount(int count) {
-        OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return String.valueOf(count);
         if (count > 99) {
             return NumberFormatUtil.formatCount(count);
         }
@@ -59,31 +56,27 @@ public abstract class DrawContextCountMixin {
             )
     )
     private int overstacked$scaleCountText(DrawContext self, TextRenderer textRenderer, String text, int x, int y, int color, boolean shadow) {
-        OverstackedConfig config = OverstackedConfig.getInstance();
-        if (config.isLoaded()) {
-            int textWidth = textRenderer.getWidth(text);
+        int textWidth = textRenderer.getWidth(text);
 
-            int slotX = x + textWidth - 17;
-            int slotY = y - 9;
+        int slotX = x + textWidth - 17;
+        int slotY = y - 9;
 
-            int slotCenterX = slotX + 8;
-            int screenX = slotCenterX - textWidth / 4;
-            int screenY = slotY + 12;
+        int slotCenterX = slotX + 8;
+        int screenX = slotCenterX - textWidth / 4;
+        int screenY = slotY + 12;
 
-            matrices.push();
-            matrices.translate(screenX, screenY, 0);
-            matrices.scale(0.5f, 0.5f, 1.0f);
-            matrices.translate(-screenX, -screenY, 0);
+        matrices.push();
+        matrices.translate(screenX, screenY, 0);
+        matrices.scale(0.5f, 0.5f, 1.0f);
+        matrices.translate(-screenX, -screenY, 0);
 
-            Text cachedText = overstacked$textCache.get(text);
-            if (cachedText == null) {
-                cachedText = Text.literal(text);
-                overstacked$textCache.put(text, cachedText);
-            }
-            int result = self.drawText(textRenderer, cachedText, screenX, screenY, color, shadow);
-            matrices.pop();
-            return result;
+        Text cachedText = overstacked$textCache.get(text);
+        if (cachedText == null) {
+            cachedText = Text.literal(text);
+            overstacked$textCache.put(text, cachedText);
         }
-        return self.drawText(textRenderer, text, x, y, color, shadow);
+        int result = self.drawText(textRenderer, cachedText, screenX, screenY, color, shadow);
+        matrices.pop();
+        return result;
     }
 }

@@ -115,7 +115,9 @@ public final class OverstackedConfigScreen {
                 config.isStackEnderPearlsSnowballs(),
                 config.isStackBucketsPotions(),
                 config.isStackTotems(),
-                config.isStackToolsArmor());
+                config.isStackToolsArmor(),
+                new java.util.LinkedHashMap<>(config.getItemOverrides()),
+                new java.util.LinkedHashMap<>(config.getTagOverrides()));
         ClientPlayNetworking.send(payload);
     }
 }

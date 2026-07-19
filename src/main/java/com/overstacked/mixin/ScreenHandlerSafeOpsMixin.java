@@ -42,7 +42,6 @@ public abstract class ScreenHandlerSafeOpsMixin {
             CallbackInfoReturnable<Boolean> cir) {
 
         OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
         if (stack.isEmpty()) {
             cir.setReturnValue(false);
             return;

@@ -22,7 +22,6 @@ public abstract class ItemScattererMixin {
             Inventory inventory, CallbackInfo ci) {
 
         OverstackedConfig config = OverstackedConfig.getInstance();
-        if (!config.isLoaded()) return;
 
         boolean hasLargeStack = false;
         for (int i = 0; i < inventory.size(); i++) {
