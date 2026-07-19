@@ -6,7 +6,6 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtOps;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -89,7 +88,7 @@ public abstract class ItemStackCodecFixMixin {
             public <V> DataResult<V> encode(ItemStack input, DynamicOps<V> ops, V prefix) {
                 int originalCount = input.getCount();
 
-                if (originalCount <= 99 || !(ops instanceof NbtOps)) {
+                if (originalCount <= 99) {
                     return original.encode(input, ops, prefix);
                 }
 
@@ -144,6 +143,7 @@ public abstract class ItemStackCodecFixMixin {
                 validateComponents(stack.getComponents());
         if (componentResult.isError()) {
             cir.setReturnValue(componentResult.map(unit -> stack));
+            return;
         }
         cir.setReturnValue(DataResult.success(stack));
     }
