@@ -1,0 +1,1635 @@
+﻿Compiled from "PlayerInventory.java"
+public class net.minecraft.entity.player.PlayerInventory implements net.minecraft.inventory.Inventory,net.minecraft.util.Nameable {
+  public static final int ITEM_USAGE_COOLDOWN;
+
+  public static final int MAIN_SIZE;
+
+  private static final int HOTBAR_SIZE;
+
+  public static final int OFF_HAND_SLOT;
+
+  public static final int NOT_FOUND;
+
+  public static final int[] ARMOR_SLOTS;
+
+  public static final int[] HELMET_SLOTS;
+
+  public final net.minecraft.util.collection.DefaultedList<net.minecraft.item.ItemStack> main;
+
+  public final net.minecraft.util.collection.DefaultedList<net.minecraft.item.ItemStack> armor;
+
+  public final net.minecraft.util.collection.DefaultedList<net.minecraft.item.ItemStack> offHand;
+
+  private final java.util.List<net.minecraft.util.collection.DefaultedList<net.minecraft.item.ItemStack>> combinedInventory;
+
+  public int selectedSlot;
+
+  public final net.minecraft.entity.player.PlayerEntity player;
+
+  private int changeCount;
+
+  public net.minecraft.entity.player.PlayerInventory(net.minecraft.entity.player.PlayerEntity);
+    Code:
+       0: aload_0
+       1: invokespecial #50                 // Method java/lang/Object."<init>":()V
+       4: aload_0
+       5: bipush        36
+       7: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      10: invokestatic  #62                 // Method net/minecraft/util/collection/DefaultedList.ofSize:(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;
+      13: putfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      16: aload_0
+      17: iconst_4
+      18: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      21: invokestatic  #62                 // Method net/minecraft/util/collection/DefaultedList.ofSize:(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;
+      24: putfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+      27: aload_0
+      28: iconst_1
+      29: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      32: invokestatic  #62                 // Method net/minecraft/util/collection/DefaultedList.ofSize:(ILjava/lang/Object;)Lnet/minecraft/util/collection/DefaultedList;
+      35: putfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+      38: aload_0
+      39: aload_0
+      40: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      43: aload_0
+      44: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+      47: aload_0
+      48: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+      51: invokestatic  #74                 // Method com/google/common/collect/ImmutableList.of:(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)Lcom/google/common/collect/ImmutableList;
+      54: putfield      #76                 // Field combinedInventory:Ljava/util/List;
+      57: aload_0
+      58: aload_1
+      59: putfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      62: return
+
+  public net.minecraft.item.ItemStack getMainHandStack();
+    Code:
+       0: aload_0
+       1: getfield      #84                 // Field selectedSlot:I
+       4: invokestatic  #88                 // Method isValidHotbarIndex:(I)Z
+       7: ifeq          25
+      10: aload_0
+      11: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      14: aload_0
+      15: getfield      #84                 // Field selectedSlot:I
+      18: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      21: checkcast     #52                 // class net/minecraft/item/ItemStack
+      24: areturn
+      25: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      28: areturn
+
+  public static int getHotbarSize();
+    Code:
+       0: bipush        9
+       2: ireturn
+
+  private boolean canStackAddMore(net.minecraft.item.ItemStack, net.minecraft.item.ItemStack);
+    Code:
+       0: aload_1
+       1: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+       4: ifne          38
+       7: aload_1
+       8: aload_2
+       9: invokestatic  #105                // Method net/minecraft/item/ItemStack.areItemsAndComponentsEqual:(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
+      12: ifeq          38
+      15: aload_1
+      16: invokevirtual #108                // Method net/minecraft/item/ItemStack.isStackable:()Z
+      19: ifeq          38
+      22: aload_1
+      23: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      26: aload_0
+      27: aload_1
+      28: invokevirtual #115                // Method getMaxCount:(Lnet/minecraft/item/ItemStack;)I
+      31: if_icmpge     38
+      34: iconst_1
+      35: goto          39
+      38: iconst_0
+      39: ireturn
+
+  public int getEmptySlot();
+    Code:
+       0: iconst_0
+       1: istore_1
+       2: iload_1
+       3: aload_0
+       4: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       7: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      10: if_icmpge     38
+      13: aload_0
+      14: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      17: iload_1
+      18: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      21: checkcast     #52                 // class net/minecraft/item/ItemStack
+      24: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      27: ifeq          32
+      30: iload_1
+      31: ireturn
+      32: iinc          1, 1
+      35: goto          2
+      38: iconst_m1
+      39: ireturn
+
+  public void addPickBlock(net.minecraft.item.ItemStack);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #125                // Method getSlotWithStack:(Lnet/minecraft/item/ItemStack;)I
+       5: istore_2
+       6: iload_2
+       7: invokestatic  #88                 // Method isValidHotbarIndex:(I)Z
+      10: ifeq          19
+      13: aload_0
+      14: iload_2
+      15: putfield      #84                 // Field selectedSlot:I
+      18: return
+      19: iload_2
+      20: iconst_m1
+      21: if_icmpne     101
+      24: aload_0
+      25: aload_0
+      26: invokevirtual #128                // Method getSwappableHotbarSlot:()I
+      29: putfield      #84                 // Field selectedSlot:I
+      32: aload_0
+      33: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      36: aload_0
+      37: getfield      #84                 // Field selectedSlot:I
+      40: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      43: checkcast     #52                 // class net/minecraft/item/ItemStack
+      46: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      49: ifne          85
+      52: aload_0
+      53: invokevirtual #130                // Method getEmptySlot:()I
+      56: istore_3
+      57: iload_3
+      58: iconst_m1
+      59: if_icmpeq     85
+      62: aload_0
+      63: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      66: iload_3
+      67: aload_0
+      68: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      71: aload_0
+      72: getfield      #84                 // Field selectedSlot:I
+      75: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      78: checkcast     #52                 // class net/minecraft/item/ItemStack
+      81: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      84: pop
+      85: aload_0
+      86: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      89: aload_0
+      90: getfield      #84                 // Field selectedSlot:I
+      93: aload_1
+      94: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      97: pop
+      98: goto          106
+     101: aload_0
+     102: iload_2
+     103: invokevirtual #138                // Method swapSlotWithHotbar:(I)V
+     106: return
+
+  public void swapSlotWithHotbar(int);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: invokevirtual #128                // Method getSwappableHotbarSlot:()I
+       5: putfield      #84                 // Field selectedSlot:I
+       8: aload_0
+       9: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      12: aload_0
+      13: getfield      #84                 // Field selectedSlot:I
+      16: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      19: checkcast     #52                 // class net/minecraft/item/ItemStack
+      22: astore_2
+      23: aload_0
+      24: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      27: aload_0
+      28: getfield      #84                 // Field selectedSlot:I
+      31: aload_0
+      32: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      35: iload_1
+      36: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      39: checkcast     #52                 // class net/minecraft/item/ItemStack
+      42: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      45: pop
+      46: aload_0
+      47: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      50: iload_1
+      51: aload_2
+      52: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      55: pop
+      56: return
+
+  public static boolean isValidHotbarIndex(int);
+    Code:
+       0: iload_0
+       1: iflt          14
+       4: iload_0
+       5: bipush        9
+       7: if_icmpge     14
+      10: iconst_1
+      11: goto          15
+      14: iconst_0
+      15: ireturn
+
+  public int getSlotWithStack(net.minecraft.item.ItemStack);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: iload_2
+       3: aload_0
+       4: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       7: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      10: if_icmpge     56
+      13: aload_0
+      14: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      17: iload_2
+      18: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      21: checkcast     #52                 // class net/minecraft/item/ItemStack
+      24: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      27: ifne          50
+      30: aload_1
+      31: aload_0
+      32: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      35: iload_2
+      36: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      39: checkcast     #52                 // class net/minecraft/item/ItemStack
+      42: invokestatic  #105                // Method net/minecraft/item/ItemStack.areItemsAndComponentsEqual:(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
+      45: ifeq          50
+      48: iload_2
+      49: ireturn
+      50: iinc          2, 1
+      53: goto          2
+      56: iconst_m1
+      57: ireturn
+
+  public int indexOf(net.minecraft.item.ItemStack);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: iload_2
+       3: aload_0
+       4: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       7: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      10: if_icmpge     72
+      13: aload_0
+      14: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      17: iload_2
+      18: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      21: checkcast     #52                 // class net/minecraft/item/ItemStack
+      24: astore_3
+      25: aload_3
+      26: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      29: ifne          66
+      32: aload_1
+      33: aload_3
+      34: invokestatic  #105                // Method net/minecraft/item/ItemStack.areItemsAndComponentsEqual:(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
+      37: ifeq          66
+      40: aload_3
+      41: invokevirtual #145                // Method net/minecraft/item/ItemStack.isDamaged:()Z
+      44: ifne          66
+      47: aload_3
+      48: invokevirtual #148                // Method net/minecraft/item/ItemStack.hasEnchantments:()Z
+      51: ifne          66
+      54: aload_3
+      55: getstatic     #154                // Field net/minecraft/component/DataComponentTypes.CUSTOM_NAME:Lnet/minecraft/component/ComponentType;
+      58: invokevirtual #158                // Method net/minecraft/item/ItemStack.contains:(Lnet/minecraft/component/ComponentType;)Z
+      61: ifne          66
+      64: iload_2
+      65: ireturn
+      66: iinc          2, 1
+      69: goto          2
+      72: iconst_m1
+      73: ireturn
+
+  public int getSwappableHotbarSlot();
+    Code:
+       0: iconst_0
+       1: istore_1
+       2: iload_1
+       3: bipush        9
+       5: if_icmpge     43
+       8: aload_0
+       9: getfield      #84                 // Field selectedSlot:I
+      12: iload_1
+      13: iadd
+      14: bipush        9
+      16: irem
+      17: istore_2
+      18: aload_0
+      19: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      22: iload_2
+      23: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      26: checkcast     #52                 // class net/minecraft/item/ItemStack
+      29: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      32: ifeq          37
+      35: iload_2
+      36: ireturn
+      37: iinc          1, 1
+      40: goto          2
+      43: iconst_0
+      44: istore_1
+      45: iload_1
+      46: bipush        9
+      48: if_icmpge     86
+      51: aload_0
+      52: getfield      #84                 // Field selectedSlot:I
+      55: iload_1
+      56: iadd
+      57: bipush        9
+      59: irem
+      60: istore_2
+      61: aload_0
+      62: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      65: iload_2
+      66: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      69: checkcast     #52                 // class net/minecraft/item/ItemStack
+      72: invokevirtual #148                // Method net/minecraft/item/ItemStack.hasEnchantments:()Z
+      75: ifne          80
+      78: iload_2
+      79: ireturn
+      80: iinc          1, 1
+      83: goto          45
+      86: aload_0
+      87: getfield      #84                 // Field selectedSlot:I
+      90: ireturn
+
+  public void scrollInHotbar(double);
+    Code:
+       0: dload_1
+       1: invokestatic  #167                // Method java/lang/Math.signum:(D)D
+       4: d2i
+       5: istore_3
+       6: aload_0
+       7: dup
+       8: getfield      #84                 // Field selectedSlot:I
+      11: iload_3
+      12: isub
+      13: putfield      #84                 // Field selectedSlot:I
+      16: aload_0
+      17: getfield      #84                 // Field selectedSlot:I
+      20: ifge          37
+      23: aload_0
+      24: dup
+      25: getfield      #84                 // Field selectedSlot:I
+      28: bipush        9
+      30: iadd
+      31: putfield      #84                 // Field selectedSlot:I
+      34: goto          16
+      37: aload_0
+      38: getfield      #84                 // Field selectedSlot:I
+      41: bipush        9
+      43: if_icmplt     60
+      46: aload_0
+      47: dup
+      48: getfield      #84                 // Field selectedSlot:I
+      51: bipush        9
+      53: isub
+      54: putfield      #84                 // Field selectedSlot:I
+      57: goto          37
+      60: return
+
+  public int remove(java.util.function.Predicate<net.minecraft.item.ItemStack>, int, net.minecraft.inventory.Inventory);
+    Code:
+       0: iconst_0
+       1: istore        4
+       3: iload_2
+       4: ifne          11
+       7: iconst_1
+       8: goto          12
+      11: iconst_0
+      12: istore        5
+      14: iload         4
+      16: aload_0
+      17: aload_1
+      18: iload_2
+      19: iload         4
+      21: isub
+      22: iload         5
+      24: invokestatic  #179                // Method net/minecraft/inventory/Inventories.remove:(Lnet/minecraft/inventory/Inventory;Ljava/util/function/Predicate;IZ)I
+      27: iadd
+      28: istore        4
+      30: iload         4
+      32: aload_3
+      33: aload_1
+      34: iload_2
+      35: iload         4
+      37: isub
+      38: iload         5
+      40: invokestatic  #179                // Method net/minecraft/inventory/Inventories.remove:(Lnet/minecraft/inventory/Inventory;Ljava/util/function/Predicate;IZ)I
+      43: iadd
+      44: istore        4
+      46: aload_0
+      47: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      50: getfield      #185                // Field net/minecraft/entity/player/PlayerEntity.currentScreenHandler:Lnet/minecraft/screen/ScreenHandler;
+      53: invokevirtual #190                // Method net/minecraft/screen/ScreenHandler.getCursorStack:()Lnet/minecraft/item/ItemStack;
+      56: astore        6
+      58: iload         4
+      60: aload         6
+      62: aload_1
+      63: iload_2
+      64: iload         4
+      66: isub
+      67: iload         5
+      69: invokestatic  #193                // Method net/minecraft/inventory/Inventories.remove:(Lnet/minecraft/item/ItemStack;Ljava/util/function/Predicate;IZ)I
+      72: iadd
+      73: istore        4
+      75: aload         6
+      77: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      80: ifeq          96
+      83: aload_0
+      84: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      87: getfield      #185                // Field net/minecraft/entity/player/PlayerEntity.currentScreenHandler:Lnet/minecraft/screen/ScreenHandler;
+      90: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      93: invokevirtual #196                // Method net/minecraft/screen/ScreenHandler.setCursorStack:(Lnet/minecraft/item/ItemStack;)V
+      96: iload         4
+      98: ireturn
+
+  private int addStack(net.minecraft.item.ItemStack);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: invokevirtual #205                // Method getOccupiedSlotWithRoomForStack:(Lnet/minecraft/item/ItemStack;)I
+       5: istore_2
+       6: iload_2
+       7: iconst_m1
+       8: if_icmpne     16
+      11: aload_0
+      12: invokevirtual #130                // Method getEmptySlot:()I
+      15: istore_2
+      16: iload_2
+      17: iconst_m1
+      18: if_icmpne     26
+      21: aload_1
+      22: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      25: ireturn
+      26: aload_0
+      27: iload_2
+      28: aload_1
+      29: invokevirtual #208                // Method addStack:(ILnet/minecraft/item/ItemStack;)I
+      32: ireturn
+
+  private int addStack(int, net.minecraft.item.ItemStack);
+    Code:
+       0: aload_2
+       1: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+       4: istore_3
+       5: aload_0
+       6: iload_1
+       7: invokevirtual #212                // Method getStack:(I)Lnet/minecraft/item/ItemStack;
+      10: astore        4
+      12: aload         4
+      14: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      17: ifeq          34
+      20: aload_2
+      21: iconst_0
+      22: invokevirtual #215                // Method net/minecraft/item/ItemStack.copyWithCount:(I)Lnet/minecraft/item/ItemStack;
+      25: astore        4
+      27: aload_0
+      28: iload_1
+      29: aload         4
+      31: invokevirtual #219                // Method setStack:(ILnet/minecraft/item/ItemStack;)V
+      34: aload_0
+      35: aload         4
+      37: invokevirtual #115                // Method getMaxCount:(Lnet/minecraft/item/ItemStack;)I
+      40: aload         4
+      42: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      45: isub
+      46: istore        5
+      48: iload_3
+      49: iload         5
+      51: invokestatic  #223                // Method java/lang/Math.min:(II)I
+      54: istore        6
+      56: iload         6
+      58: ifne          63
+      61: iload_3
+      62: ireturn
+      63: iload_3
+      64: iload         6
+      66: isub
+      67: istore_3
+      68: aload         4
+      70: iload         6
+      72: invokevirtual #226                // Method net/minecraft/item/ItemStack.increment:(I)V
+      75: aload         4
+      77: iconst_5
+      78: invokevirtual #229                // Method net/minecraft/item/ItemStack.setBobbingAnimationTime:(I)V
+      81: iload_3
+      82: ireturn
+
+  public int getOccupiedSlotWithRoomForStack(net.minecraft.item.ItemStack);
+    Code:
+       0: aload_0
+       1: aload_0
+       2: aload_0
+       3: getfield      #84                 // Field selectedSlot:I
+       6: invokevirtual #212                // Method getStack:(I)Lnet/minecraft/item/ItemStack;
+       9: aload_1
+      10: invokevirtual #232                // Method canStackAddMore:(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
+      13: ifeq          21
+      16: aload_0
+      17: getfield      #84                 // Field selectedSlot:I
+      20: ireturn
+      21: aload_0
+      22: aload_0
+      23: bipush        40
+      25: invokevirtual #212                // Method getStack:(I)Lnet/minecraft/item/ItemStack;
+      28: aload_1
+      29: invokevirtual #232                // Method canStackAddMore:(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
+      32: ifeq          38
+      35: bipush        40
+      37: ireturn
+      38: iconst_0
+      39: istore_2
+      40: iload_2
+      41: aload_0
+      42: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      45: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      48: if_icmpge     78
+      51: aload_0
+      52: aload_0
+      53: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      56: iload_2
+      57: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      60: checkcast     #52                 // class net/minecraft/item/ItemStack
+      63: aload_1
+      64: invokevirtual #232                // Method canStackAddMore:(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
+      67: ifeq          72
+      70: iload_2
+      71: ireturn
+      72: iinc          2, 1
+      75: goto          40
+      78: iconst_m1
+      79: ireturn
+
+  public void updateItems();
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       4: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       9: astore_1
+      10: aload_1
+      11: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          98
+      19: aload_1
+      20: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #58                 // class net/minecraft/util/collection/DefaultedList
+      28: astore_2
+      29: iconst_0
+      30: istore_3
+      31: iload_3
+      32: aload_2
+      33: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      36: if_icmpge     95
+      39: aload_2
+      40: iload_3
+      41: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      44: checkcast     #52                 // class net/minecraft/item/ItemStack
+      47: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      50: ifne          89
+      53: aload_2
+      54: iload_3
+      55: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      58: checkcast     #52                 // class net/minecraft/item/ItemStack
+      61: aload_0
+      62: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      65: invokevirtual #252                // Method net/minecraft/entity/player/PlayerEntity.getWorld:()Lnet/minecraft/world/World;
+      68: aload_0
+      69: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      72: iload_3
+      73: aload_0
+      74: getfield      #84                 // Field selectedSlot:I
+      77: iload_3
+      78: if_icmpne     85
+      81: iconst_1
+      82: goto          86
+      85: iconst_0
+      86: invokevirtual #258                // Method net/minecraft/item/ItemStack.inventoryTick:(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;IZ)V
+      89: iinc          3, 1
+      92: goto          31
+      95: goto          10
+      98: return
+
+  public boolean insertStack(net.minecraft.item.ItemStack);
+    Code:
+       0: aload_0
+       1: iconst_m1
+       2: aload_1
+       3: invokevirtual #264                // Method insertStack:(ILnet/minecraft/item/ItemStack;)Z
+       6: ireturn
+
+  public boolean insertStack(int, net.minecraft.item.ItemStack);
+    Code:
+       0: aload_2
+       1: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+       4: ifeq          9
+       7: iconst_0
+       8: ireturn
+       9: aload_2
+      10: invokevirtual #145                // Method net/minecraft/item/ItemStack.isDamaged:()Z
+      13: ifne          102
+      16: aload_2
+      17: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      20: istore_3
+      21: iload_1
+      22: iconst_m1
+      23: if_icmpne     38
+      26: aload_2
+      27: aload_0
+      28: aload_2
+      29: invokevirtual #268                // Method addStack:(Lnet/minecraft/item/ItemStack;)I
+      32: invokevirtual #271                // Method net/minecraft/item/ItemStack.setCount:(I)V
+      35: goto          48
+      38: aload_2
+      39: aload_0
+      40: iload_1
+      41: aload_2
+      42: invokevirtual #208                // Method addStack:(ILnet/minecraft/item/ItemStack;)I
+      45: invokevirtual #271                // Method net/minecraft/item/ItemStack.setCount:(I)V
+      48: aload_2
+      49: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      52: ifne          63
+      55: aload_2
+      56: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      59: iload_3
+      60: if_icmplt     16
+      63: aload_2
+      64: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      67: iload_3
+      68: if_icmpne     88
+      71: aload_0
+      72: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      75: invokevirtual #274                // Method net/minecraft/entity/player/PlayerEntity.isInCreativeMode:()Z
+      78: ifeq          88
+      81: aload_2
+      82: iconst_0
+      83: invokevirtual #271                // Method net/minecraft/item/ItemStack.setCount:(I)V
+      86: iconst_1
+      87: ireturn
+      88: aload_2
+      89: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      92: iload_3
+      93: if_icmpge     100
+      96: iconst_1
+      97: goto          101
+     100: iconst_0
+     101: ireturn
+     102: iload_1
+     103: iconst_m1
+     104: if_icmpne     112
+     107: aload_0
+     108: invokevirtual #130                // Method getEmptySlot:()I
+     111: istore_1
+     112: iload_1
+     113: iflt          146
+     116: aload_0
+     117: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+     120: iload_1
+     121: aload_2
+     122: invokevirtual #277                // Method net/minecraft/item/ItemStack.copyAndEmpty:()Lnet/minecraft/item/ItemStack;
+     125: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+     128: pop
+     129: aload_0
+     130: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+     133: iload_1
+     134: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+     137: checkcast     #52                 // class net/minecraft/item/ItemStack
+     140: iconst_5
+     141: invokevirtual #229                // Method net/minecraft/item/ItemStack.setBobbingAnimationTime:(I)V
+     144: iconst_1
+     145: ireturn
+     146: aload_0
+     147: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+     150: invokevirtual #274                // Method net/minecraft/entity/player/PlayerEntity.isInCreativeMode:()Z
+     153: ifeq          163
+     156: aload_2
+     157: iconst_0
+     158: invokevirtual #271                // Method net/minecraft/item/ItemStack.setCount:(I)V
+     161: iconst_1
+     162: ireturn
+     163: iconst_0
+     164: ireturn
+     165: astore_3
+     166: aload_3
+     167: ldc_w         #279                // String Adding item to inventory
+     170: invokestatic  #285                // Method net/minecraft/util/crash/CrashReport.create:(Ljava/lang/Throwable;Ljava/lang/String;)Lnet/minecraft/util/crash/CrashReport;
+     173: astore        4
+     175: aload         4
+     177: ldc_w         #287                // String Item being added
+     180: invokevirtual #291                // Method net/minecraft/util/crash/CrashReport.addElement:(Ljava/lang/String;)Lnet/minecraft/util/crash/CrashReportSection;
+     183: astore        5
+     185: aload         5
+     187: ldc_w         #293                // String Item ID
+     190: aload_2
+     191: invokevirtual #297                // Method net/minecraft/item/ItemStack.getItem:()Lnet/minecraft/item/Item;
+     194: invokestatic  #303                // Method net/minecraft/item/Item.getRawId:(Lnet/minecraft/item/Item;)I
+     197: invokestatic  #309                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     200: invokevirtual #315                // Method net/minecraft/util/crash/CrashReportSection.add:(Ljava/lang/String;Ljava/lang/Object;)Lnet/minecraft/util/crash/CrashReportSection;
+     203: pop
+     204: aload         5
+     206: ldc_w         #317                // String Item data
+     209: aload_2
+     210: invokevirtual #320                // Method net/minecraft/item/ItemStack.getDamage:()I
+     213: invokestatic  #309                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+     216: invokevirtual #315                // Method net/minecraft/util/crash/CrashReportSection.add:(Ljava/lang/String;Ljava/lang/Object;)Lnet/minecraft/util/crash/CrashReportSection;
+     219: pop
+     220: aload         5
+     222: ldc_w         #322                // String Item name
+     225: aload_2
+     226: invokedynamic #341,  0            // InvokeDynamic #0:call:(Lnet/minecraft/item/ItemStack;)Lnet/minecraft/util/crash/CrashCallable;
+     231: invokevirtual #344                // Method net/minecraft/util/crash/CrashReportSection.add:(Ljava/lang/String;Lnet/minecraft/util/crash/CrashCallable;)Lnet/minecraft/util/crash/CrashReportSection;
+     234: pop
+     235: new           #346                // class net/minecraft/util/crash/CrashException
+     238: dup
+     239: aload         4
+     241: invokespecial #349                // Method net/minecraft/util/crash/CrashException."<init>":(Lnet/minecraft/util/crash/CrashReport;)V
+     244: athrow
+    Exception table:
+       from    to  target type
+           9    87   165   Class java/lang/Throwable
+          88   101   165   Class java/lang/Throwable
+         102   145   165   Class java/lang/Throwable
+         146   162   165   Class java/lang/Throwable
+         163   164   165   Class java/lang/Throwable
+
+  public void offerOrDrop(net.minecraft.item.ItemStack);
+    Code:
+       0: aload_0
+       1: aload_1
+       2: iconst_1
+       3: invokevirtual #360                // Method offer:(Lnet/minecraft/item/ItemStack;Z)V
+       6: return
+
+  public void offer(net.minecraft.item.ItemStack, boolean);
+    Code:
+       0: aload_1
+       1: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+       4: ifne          116
+       7: aload_0
+       8: aload_1
+       9: invokevirtual #205                // Method getOccupiedSlotWithRoomForStack:(Lnet/minecraft/item/ItemStack;)I
+      12: istore_3
+      13: iload_3
+      14: iconst_m1
+      15: if_icmpne     23
+      18: aload_0
+      19: invokevirtual #130                // Method getEmptySlot:()I
+      22: istore_3
+      23: iload_3
+      24: iconst_m1
+      25: if_icmpne     41
+      28: aload_0
+      29: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      32: aload_1
+      33: iconst_0
+      34: invokevirtual #365                // Method net/minecraft/entity/player/PlayerEntity.dropItem:(Lnet/minecraft/item/ItemStack;Z)Lnet/minecraft/entity/ItemEntity;
+      37: pop
+      38: goto          116
+      41: aload_1
+      42: invokevirtual #367                // Method net/minecraft/item/ItemStack.getMaxCount:()I
+      45: aload_0
+      46: iload_3
+      47: invokevirtual #212                // Method getStack:(I)Lnet/minecraft/item/ItemStack;
+      50: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      53: isub
+      54: istore        4
+      56: aload_0
+      57: iload_3
+      58: aload_1
+      59: iload         4
+      61: invokevirtual #370                // Method net/minecraft/item/ItemStack.split:(I)Lnet/minecraft/item/ItemStack;
+      64: invokevirtual #264                // Method insertStack:(ILnet/minecraft/item/ItemStack;)Z
+      67: ifeq          113
+      70: iload_2
+      71: ifeq          113
+      74: aload_0
+      75: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      78: instanceof    #372                // class net/minecraft/server/network/ServerPlayerEntity
+      81: ifeq          113
+      84: aload_0
+      85: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      88: checkcast     #372                // class net/minecraft/server/network/ServerPlayerEntity
+      91: getfield      #376                // Field net/minecraft/server/network/ServerPlayerEntity.networkHandler:Lnet/minecraft/server/network/ServerPlayNetworkHandler;
+      94: new           #378                // class net/minecraft/network/packet/s2c/play/ScreenHandlerSlotUpdateS2CPacket
+      97: dup
+      98: bipush        -2
+     100: iconst_0
+     101: iload_3
+     102: aload_0
+     103: iload_3
+     104: invokevirtual #212                // Method getStack:(I)Lnet/minecraft/item/ItemStack;
+     107: invokespecial #381                // Method net/minecraft/network/packet/s2c/play/ScreenHandlerSlotUpdateS2CPacket."<init>":(IIILnet/minecraft/item/ItemStack;)V
+     110: invokevirtual #387                // Method net/minecraft/server/network/ServerPlayNetworkHandler.sendPacket:(Lnet/minecraft/network/packet/Packet;)V
+     113: goto          0
+     116: return
+
+  public net.minecraft.item.ItemStack removeStack(int, int);
+    Code:
+       0: aconst_null
+       1: astore_3
+       2: aload_0
+       3: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       6: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      11: astore        4
+      13: aload         4
+      15: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      20: ifeq          61
+      23: aload         4
+      25: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      30: checkcast     #58                 // class net/minecraft/util/collection/DefaultedList
+      33: astore        5
+      35: iload_1
+      36: aload         5
+      38: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      41: if_icmpge     50
+      44: aload         5
+      46: astore_3
+      47: goto          61
+      50: iload_1
+      51: aload         5
+      53: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      56: isub
+      57: istore_1
+      58: goto          13
+      61: aload_3
+      62: ifnull        88
+      65: aload_3
+      66: iload_1
+      67: invokeinterface #391,  2          // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+      72: checkcast     #52                 // class net/minecraft/item/ItemStack
+      75: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      78: ifne          88
+      81: aload_3
+      82: iload_1
+      83: iload_2
+      84: invokestatic  #395                // Method net/minecraft/inventory/Inventories.splitStack:(Ljava/util/List;II)Lnet/minecraft/item/ItemStack;
+      87: areturn
+      88: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      91: areturn
+
+  public void removeOne(net.minecraft.item.ItemStack);
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       4: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       9: astore_2
+      10: aload_2
+      11: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          73
+      19: aload_2
+      20: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #58                 // class net/minecraft/util/collection/DefaultedList
+      28: astore_3
+      29: iconst_0
+      30: istore        4
+      32: iload         4
+      34: aload_3
+      35: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      38: if_icmpge     70
+      41: aload_3
+      42: iload         4
+      44: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      47: aload_1
+      48: if_acmpne     64
+      51: aload_3
+      52: iload         4
+      54: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      57: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      60: pop
+      61: goto          70
+      64: iinc          4, 1
+      67: goto          32
+      70: goto          10
+      73: return
+
+  public net.minecraft.item.ItemStack removeStack(int);
+    Code:
+       0: aconst_null
+       1: astore_2
+       2: aload_0
+       3: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       6: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      11: astore_3
+      12: aload_3
+      13: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      18: ifeq          58
+      21: aload_3
+      22: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      27: checkcast     #58                 // class net/minecraft/util/collection/DefaultedList
+      30: astore        4
+      32: iload_1
+      33: aload         4
+      35: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      38: if_icmpge     47
+      41: aload         4
+      43: astore_2
+      44: goto          58
+      47: iload_1
+      48: aload         4
+      50: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      53: isub
+      54: istore_1
+      55: goto          12
+      58: aload_2
+      59: ifnull        96
+      62: aload_2
+      63: iload_1
+      64: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      67: checkcast     #52                 // class net/minecraft/item/ItemStack
+      70: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      73: ifne          96
+      76: aload_2
+      77: iload_1
+      78: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      81: checkcast     #52                 // class net/minecraft/item/ItemStack
+      84: astore_3
+      85: aload_2
+      86: iload_1
+      87: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      90: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      93: pop
+      94: aload_3
+      95: areturn
+      96: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      99: areturn
+
+  public void setStack(int, net.minecraft.item.ItemStack);
+    Code:
+       0: aconst_null
+       1: astore_3
+       2: aload_0
+       3: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       6: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      11: astore        4
+      13: aload         4
+      15: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      20: ifeq          61
+      23: aload         4
+      25: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      30: checkcast     #58                 // class net/minecraft/util/collection/DefaultedList
+      33: astore        5
+      35: iload_1
+      36: aload         5
+      38: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      41: if_icmpge     50
+      44: aload         5
+      46: astore_3
+      47: goto          61
+      50: iload_1
+      51: aload         5
+      53: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      56: isub
+      57: istore_1
+      58: goto          13
+      61: aload_3
+      62: ifnull        72
+      65: aload_3
+      66: iload_1
+      67: aload_2
+      68: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      71: pop
+      72: return
+
+  public float getBlockBreakingSpeed(net.minecraft.block.BlockState);
+    Code:
+       0: aload_0
+       1: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       4: aload_0
+       5: getfield      #84                 // Field selectedSlot:I
+       8: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      11: checkcast     #52                 // class net/minecraft/item/ItemStack
+      14: aload_1
+      15: invokevirtual #405                // Method net/minecraft/item/ItemStack.getMiningSpeedMultiplier:(Lnet/minecraft/block/BlockState;)F
+      18: freturn
+
+  public net.minecraft.nbt.NbtList writeNbt(net.minecraft.nbt.NbtList);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: iload_2
+       3: aload_0
+       4: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       7: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      10: if_icmpge     80
+      13: aload_0
+      14: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      17: iload_2
+      18: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      21: checkcast     #52                 // class net/minecraft/item/ItemStack
+      24: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      27: ifne          74
+      30: new           #411                // class net/minecraft/nbt/NbtCompound
+      33: dup
+      34: invokespecial #412                // Method net/minecraft/nbt/NbtCompound."<init>":()V
+      37: astore_3
+      38: aload_3
+      39: ldc_w         #414                // String Slot
+      42: iload_2
+      43: i2b
+      44: invokevirtual #418                // Method net/minecraft/nbt/NbtCompound.putByte:(Ljava/lang/String;B)V
+      47: aload_1
+      48: aload_0
+      49: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      52: iload_2
+      53: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+      56: checkcast     #52                 // class net/minecraft/item/ItemStack
+      59: aload_0
+      60: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      63: invokevirtual #422                // Method net/minecraft/entity/player/PlayerEntity.getRegistryManager:()Lnet/minecraft/registry/DynamicRegistryManager;
+      66: aload_3
+      67: invokevirtual #426                // Method net/minecraft/item/ItemStack.encode:(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;
+      70: invokevirtual #431                // Method net/minecraft/nbt/NbtList.add:(Ljava/lang/Object;)Z
+      73: pop
+      74: iinc          2, 1
+      77: goto          2
+      80: iconst_0
+      81: istore_2
+      82: iload_2
+      83: aload_0
+      84: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+      87: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      90: if_icmpge     163
+      93: aload_0
+      94: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+      97: iload_2
+      98: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+     101: checkcast     #52                 // class net/minecraft/item/ItemStack
+     104: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+     107: ifne          157
+     110: new           #411                // class net/minecraft/nbt/NbtCompound
+     113: dup
+     114: invokespecial #412                // Method net/minecraft/nbt/NbtCompound."<init>":()V
+     117: astore_3
+     118: aload_3
+     119: ldc_w         #414                // String Slot
+     122: iload_2
+     123: bipush        100
+     125: iadd
+     126: i2b
+     127: invokevirtual #418                // Method net/minecraft/nbt/NbtCompound.putByte:(Ljava/lang/String;B)V
+     130: aload_1
+     131: aload_0
+     132: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+     135: iload_2
+     136: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+     139: checkcast     #52                 // class net/minecraft/item/ItemStack
+     142: aload_0
+     143: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+     146: invokevirtual #422                // Method net/minecraft/entity/player/PlayerEntity.getRegistryManager:()Lnet/minecraft/registry/DynamicRegistryManager;
+     149: aload_3
+     150: invokevirtual #426                // Method net/minecraft/item/ItemStack.encode:(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;
+     153: invokevirtual #431                // Method net/minecraft/nbt/NbtList.add:(Ljava/lang/Object;)Z
+     156: pop
+     157: iinc          2, 1
+     160: goto          82
+     163: iconst_0
+     164: istore_2
+     165: iload_2
+     166: aload_0
+     167: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+     170: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+     173: if_icmpge     247
+     176: aload_0
+     177: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+     180: iload_2
+     181: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+     184: checkcast     #52                 // class net/minecraft/item/ItemStack
+     187: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+     190: ifne          241
+     193: new           #411                // class net/minecraft/nbt/NbtCompound
+     196: dup
+     197: invokespecial #412                // Method net/minecraft/nbt/NbtCompound."<init>":()V
+     200: astore_3
+     201: aload_3
+     202: ldc_w         #414                // String Slot
+     205: iload_2
+     206: sipush        150
+     209: iadd
+     210: i2b
+     211: invokevirtual #418                // Method net/minecraft/nbt/NbtCompound.putByte:(Ljava/lang/String;B)V
+     214: aload_1
+     215: aload_0
+     216: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+     219: iload_2
+     220: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+     223: checkcast     #52                 // class net/minecraft/item/ItemStack
+     226: aload_0
+     227: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+     230: invokevirtual #422                // Method net/minecraft/entity/player/PlayerEntity.getRegistryManager:()Lnet/minecraft/registry/DynamicRegistryManager;
+     233: aload_3
+     234: invokevirtual #426                // Method net/minecraft/item/ItemStack.encode:(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;
+     237: invokevirtual #431                // Method net/minecraft/nbt/NbtList.add:(Ljava/lang/Object;)Z
+     240: pop
+     241: iinc          2, 1
+     244: goto          165
+     247: aload_1
+     248: areturn
+
+  public void readNbt(net.minecraft.nbt.NbtList);
+    Code:
+       0: aload_0
+       1: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       4: invokevirtual #439                // Method net/minecraft/util/collection/DefaultedList.clear:()V
+       7: aload_0
+       8: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+      11: invokevirtual #439                // Method net/minecraft/util/collection/DefaultedList.clear:()V
+      14: aload_0
+      15: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+      18: invokevirtual #439                // Method net/minecraft/util/collection/DefaultedList.clear:()V
+      21: iconst_0
+      22: istore_2
+      23: iload_2
+      24: aload_1
+      25: invokevirtual #440                // Method net/minecraft/nbt/NbtList.size:()I
+      28: if_icmpge     190
+      31: aload_1
+      32: iload_2
+      33: invokevirtual #444                // Method net/minecraft/nbt/NbtList.getCompound:(I)Lnet/minecraft/nbt/NbtCompound;
+      36: astore_3
+      37: aload_3
+      38: ldc_w         #414                // String Slot
+      41: invokevirtual #448                // Method net/minecraft/nbt/NbtCompound.getByte:(Ljava/lang/String;)B
+      44: sipush        255
+      47: iand
+      48: istore        4
+      50: aload_0
+      51: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      54: invokevirtual #422                // Method net/minecraft/entity/player/PlayerEntity.getRegistryManager:()Lnet/minecraft/registry/DynamicRegistryManager;
+      57: aload_3
+      58: invokestatic  #452                // Method net/minecraft/item/ItemStack.fromNbt:(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;Lnet/minecraft/nbt/NbtElement;)Ljava/util/Optional;
+      61: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      64: invokevirtual #458                // Method java/util/Optional.orElse:(Ljava/lang/Object;)Ljava/lang/Object;
+      67: checkcast     #52                 // class net/minecraft/item/ItemStack
+      70: astore        5
+      72: iload         4
+      74: iflt          104
+      77: iload         4
+      79: aload_0
+      80: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      83: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      86: if_icmpge     104
+      89: aload_0
+      90: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+      93: iload         4
+      95: aload         5
+      97: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+     100: pop
+     101: goto          184
+     104: iload         4
+     106: bipush        100
+     108: if_icmplt     144
+     111: iload         4
+     113: aload_0
+     114: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+     117: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+     120: bipush        100
+     122: iadd
+     123: if_icmpge     144
+     126: aload_0
+     127: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+     130: iload         4
+     132: bipush        100
+     134: isub
+     135: aload         5
+     137: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+     140: pop
+     141: goto          184
+     144: iload         4
+     146: sipush        150
+     149: if_icmplt     184
+     152: iload         4
+     154: aload_0
+     155: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+     158: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+     161: sipush        150
+     164: iadd
+     165: if_icmpge     184
+     168: aload_0
+     169: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+     172: iload         4
+     174: sipush        150
+     177: isub
+     178: aload         5
+     180: invokevirtual #134                // Method net/minecraft/util/collection/DefaultedList.set:(ILjava/lang/Object;)Ljava/lang/Object;
+     183: pop
+     184: iinc          2, 1
+     187: goto          23
+     190: return
+
+  public int size();
+    Code:
+       0: aload_0
+       1: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       4: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+       7: aload_0
+       8: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+      11: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      14: iadd
+      15: aload_0
+      16: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+      19: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      22: iadd
+      23: ireturn
+
+  public boolean isEmpty();
+    Code:
+       0: aload_0
+       1: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       4: invokevirtual #459                // Method net/minecraft/util/collection/DefaultedList.iterator:()Ljava/util/Iterator;
+       7: astore_1
+       8: aload_1
+       9: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      14: ifeq          39
+      17: aload_1
+      18: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      23: checkcast     #52                 // class net/minecraft/item/ItemStack
+      26: astore_2
+      27: aload_2
+      28: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      31: ifne          36
+      34: iconst_0
+      35: ireturn
+      36: goto          8
+      39: aload_0
+      40: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+      43: invokevirtual #459                // Method net/minecraft/util/collection/DefaultedList.iterator:()Ljava/util/Iterator;
+      46: astore_1
+      47: aload_1
+      48: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      53: ifeq          78
+      56: aload_1
+      57: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      62: checkcast     #52                 // class net/minecraft/item/ItemStack
+      65: astore_2
+      66: aload_2
+      67: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      70: ifne          75
+      73: iconst_0
+      74: ireturn
+      75: goto          47
+      78: aload_0
+      79: getfield      #68                 // Field offHand:Lnet/minecraft/util/collection/DefaultedList;
+      82: invokevirtual #459                // Method net/minecraft/util/collection/DefaultedList.iterator:()Ljava/util/Iterator;
+      85: astore_1
+      86: aload_1
+      87: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      92: ifeq          117
+      95: aload_1
+      96: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+     101: checkcast     #52                 // class net/minecraft/item/ItemStack
+     104: astore_2
+     105: aload_2
+     106: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+     109: ifne          114
+     112: iconst_0
+     113: ireturn
+     114: goto          86
+     117: iconst_1
+     118: ireturn
+
+  public net.minecraft.item.ItemStack getStack(int);
+    Code:
+       0: aconst_null
+       1: astore_2
+       2: aload_0
+       3: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       6: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      11: astore_3
+      12: aload_3
+      13: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      18: ifeq          58
+      21: aload_3
+      22: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      27: checkcast     #58                 // class net/minecraft/util/collection/DefaultedList
+      30: astore        4
+      32: iload_1
+      33: aload         4
+      35: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      38: if_icmpge     47
+      41: aload         4
+      43: astore_2
+      44: goto          58
+      47: iload_1
+      48: aload         4
+      50: invokevirtual #119                // Method net/minecraft/util/collection/DefaultedList.size:()I
+      53: isub
+      54: istore_1
+      55: goto          12
+      58: aload_2
+      59: ifnonnull     68
+      62: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      65: goto          78
+      68: aload_2
+      69: iload_1
+      70: invokeinterface #391,  2          // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+      75: checkcast     #52                 // class net/minecraft/item/ItemStack
+      78: areturn
+
+  public net.minecraft.text.Text getName();
+    Code:
+       0: ldc_w         #463                // String container.inventory
+       3: invokestatic  #469                // InterfaceMethod net/minecraft/text/Text.translatable:(Ljava/lang/String;)Lnet/minecraft/text/MutableText;
+       6: areturn
+
+  public net.minecraft.item.ItemStack getArmorStack(int);
+    Code:
+       0: aload_0
+       1: getfield      #66                 // Field armor:Lnet/minecraft/util/collection/DefaultedList;
+       4: iload_1
+       5: invokevirtual #92                 // Method net/minecraft/util/collection/DefaultedList.get:(I)Ljava/lang/Object;
+       8: checkcast     #52                 // class net/minecraft/item/ItemStack
+      11: areturn
+
+  public void dropAll();
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       4: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       9: astore_1
+      10: aload_1
+      11: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          93
+      19: aload_1
+      20: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #235                // class java/util/List
+      28: astore_2
+      29: iconst_0
+      30: istore_3
+      31: iload_3
+      32: aload_2
+      33: invokeinterface #472,  1          // InterfaceMethod java/util/List.size:()I
+      38: if_icmpge     90
+      41: aload_2
+      42: iload_3
+      43: invokeinterface #391,  2          // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+      48: checkcast     #52                 // class net/minecraft/item/ItemStack
+      51: astore        4
+      53: aload         4
+      55: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      58: ifne          84
+      61: aload_0
+      62: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+      65: aload         4
+      67: iconst_1
+      68: iconst_0
+      69: invokevirtual #475                // Method net/minecraft/entity/player/PlayerEntity.dropItem:(Lnet/minecraft/item/ItemStack;ZZ)Lnet/minecraft/entity/ItemEntity;
+      72: pop
+      73: aload_2
+      74: iload_3
+      75: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      78: invokeinterface #476,  3          // InterfaceMethod java/util/List.set:(ILjava/lang/Object;)Ljava/lang/Object;
+      83: pop
+      84: iinc          3, 1
+      87: goto          31
+      90: goto          10
+      93: return
+
+  public void markDirty();
+    Code:
+       0: aload_0
+       1: dup
+       2: getfield      #479                // Field changeCount:I
+       5: iconst_1
+       6: iadd
+       7: putfield      #479                // Field changeCount:I
+      10: return
+
+  public int getChangeCount();
+    Code:
+       0: aload_0
+       1: getfield      #479                // Field changeCount:I
+       4: ireturn
+
+  public boolean canPlayerUse(net.minecraft.entity.player.PlayerEntity);
+    Code:
+       0: aload_1
+       1: aload_0
+       2: getfield      #78                 // Field player:Lnet/minecraft/entity/player/PlayerEntity;
+       5: ldc2_w        #483                // double 4.0d
+       8: invokevirtual #488                // Method net/minecraft/entity/player/PlayerEntity.canInteractWithEntity:(Lnet/minecraft/entity/Entity;D)Z
+      11: ireturn
+
+  public boolean contains(net.minecraft.item.ItemStack);
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       4: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       9: astore_2
+      10: aload_2
+      11: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          84
+      19: aload_2
+      20: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #235                // class java/util/List
+      28: astore_3
+      29: aload_3
+      30: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      35: astore        4
+      37: aload         4
+      39: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      44: ifeq          81
+      47: aload         4
+      49: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      54: checkcast     #52                 // class net/minecraft/item/ItemStack
+      57: astore        5
+      59: aload         5
+      61: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      64: ifne          78
+      67: aload         5
+      69: aload_1
+      70: invokestatic  #105                // Method net/minecraft/item/ItemStack.areItemsAndComponentsEqual:(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z
+      73: ifeq          78
+      76: iconst_1
+      77: ireturn
+      78: goto          37
+      81: goto          10
+      84: iconst_0
+      85: ireturn
+
+  public boolean contains(net.minecraft.registry.tag.TagKey<net.minecraft.item.Item>);
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       4: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       9: astore_2
+      10: aload_2
+      11: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          84
+      19: aload_2
+      20: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #235                // class java/util/List
+      28: astore_3
+      29: aload_3
+      30: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      35: astore        4
+      37: aload         4
+      39: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      44: ifeq          81
+      47: aload         4
+      49: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      54: checkcast     #52                 // class net/minecraft/item/ItemStack
+      57: astore        5
+      59: aload         5
+      61: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+      64: ifne          78
+      67: aload         5
+      69: aload_1
+      70: invokevirtual #496                // Method net/minecraft/item/ItemStack.isIn:(Lnet/minecraft/registry/tag/TagKey;)Z
+      73: ifeq          78
+      76: iconst_1
+      77: ireturn
+      78: goto          37
+      81: goto          10
+      84: iconst_0
+      85: ireturn
+
+  public boolean contains(java.util.function.Predicate<net.minecraft.item.ItemStack>);
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       4: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       9: astore_2
+      10: aload_2
+      11: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          78
+      19: aload_2
+      20: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #235                // class java/util/List
+      28: astore_3
+      29: aload_3
+      30: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+      35: astore        4
+      37: aload         4
+      39: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      44: ifeq          75
+      47: aload         4
+      49: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      54: checkcast     #52                 // class net/minecraft/item/ItemStack
+      57: astore        5
+      59: aload_1
+      60: aload         5
+      62: invokeinterface #506,  2          // InterfaceMethod java/util/function/Predicate.test:(Ljava/lang/Object;)Z
+      67: ifeq          72
+      70: iconst_1
+      71: ireturn
+      72: goto          37
+      75: goto          10
+      78: iconst_0
+      79: ireturn
+
+  public void clone(net.minecraft.entity.player.PlayerInventory);
+    Code:
+       0: iconst_0
+       1: istore_2
+       2: iload_2
+       3: aload_0
+       4: invokevirtual #510                // Method size:()I
+       7: if_icmpge     26
+      10: aload_0
+      11: iload_2
+      12: aload_1
+      13: iload_2
+      14: invokevirtual #212                // Method getStack:(I)Lnet/minecraft/item/ItemStack;
+      17: invokevirtual #219                // Method setStack:(ILnet/minecraft/item/ItemStack;)V
+      20: iinc          2, 1
+      23: goto          2
+      26: aload_0
+      27: aload_1
+      28: getfield      #84                 // Field selectedSlot:I
+      31: putfield      #84                 // Field selectedSlot:I
+      34: return
+
+  public void clear();
+    Code:
+       0: aload_0
+       1: getfield      #76                 // Field combinedInventory:Ljava/util/List;
+       4: invokeinterface #239,  1          // InterfaceMethod java/util/List.iterator:()Ljava/util/Iterator;
+       9: astore_1
+      10: aload_1
+      11: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      16: ifeq          38
+      19: aload_1
+      20: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      25: checkcast     #235                // class java/util/List
+      28: astore_2
+      29: aload_2
+      30: invokeinterface #511,  1          // InterfaceMethod java/util/List.clear:()V
+      35: goto          10
+      38: return
+
+  public void populateRecipeFinder(net.minecraft.recipe.RecipeMatcher);
+    Code:
+       0: aload_0
+       1: getfield      #64                 // Field main:Lnet/minecraft/util/collection/DefaultedList;
+       4: invokevirtual #459                // Method net/minecraft/util/collection/DefaultedList.iterator:()Ljava/util/Iterator;
+       7: astore_2
+       8: aload_2
+       9: invokeinterface #244,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+      14: ifeq          35
+      17: aload_2
+      18: invokeinterface #248,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+      23: checkcast     #52                 // class net/minecraft/item/ItemStack
+      26: astore_3
+      27: aload_1
+      28: aload_3
+      29: invokevirtual #519                // Method net/minecraft/recipe/RecipeMatcher.addUnenchantedInput:(Lnet/minecraft/item/ItemStack;)V
+      32: goto          8
+      35: return
+
+  public net.minecraft.item.ItemStack dropSelectedItem(boolean);
+    Code:
+       0: aload_0
+       1: invokevirtual #525                // Method getMainHandStack:()Lnet/minecraft/item/ItemStack;
+       4: astore_2
+       5: aload_2
+       6: invokevirtual #102                // Method net/minecraft/item/ItemStack.isEmpty:()Z
+       9: ifeq          16
+      12: getstatic     #56                 // Field net/minecraft/item/ItemStack.EMPTY:Lnet/minecraft/item/ItemStack;
+      15: areturn
+      16: aload_0
+      17: aload_0
+      18: getfield      #84                 // Field selectedSlot:I
+      21: iload_1
+      22: ifeq          32
+      25: aload_2
+      26: invokevirtual #111                // Method net/minecraft/item/ItemStack.getCount:()I
+      29: goto          33
+      32: iconst_1
+      33: invokevirtual #527                // Method removeStack:(II)Lnet/minecraft/item/ItemStack;
+      36: areturn
+
+  private static java.lang.String method_7389(net.minecraft.item.ItemStack) throws java.lang.Exception;
+    Code:
+       0: aload_0
+       1: invokevirtual #531                // Method net/minecraft/item/ItemStack.getName:()Lnet/minecraft/text/Text;
+       4: invokeinterface #534,  1          // InterfaceMethod net/minecraft/text/Text.getString:()Ljava/lang/String;
+       9: areturn
+
+  static {};
+    Code:
+       0: iconst_4
+       1: newarray       int
+       3: dup
+       4: iconst_0
+       5: iconst_0
+       6: iastore
+       7: dup
+       8: iconst_1
+       9: iconst_1
+      10: iastore
+      11: dup
+      12: iconst_2
+      13: iconst_2
+      14: iastore
+      15: dup
+      16: iconst_3
+      17: iconst_3
+      18: iastore
+      19: putstatic     #537                // Field ARMOR_SLOTS:[I
+      22: iconst_1
+      23: newarray       int
+      25: dup
+      26: iconst_0
+      27: iconst_3
+      28: iastore
+      29: putstatic     #539                // Field HELMET_SLOTS:[I
+      32: return
+}

@@ -1,0 +1,137 @@
+﻿
+       127: invokestatic  #178                // InterfaceMethod 
+com/mojang/serialization/DataResult.success:(Ljava/lang/Object;)Lcom/mojang/serialization/DataResult;
+       130: areturn
+  
+>   public static java.util.Optional<net.minecraft.item.ItemStack> 
+fromNbt(net.minecraft.registry.RegistryWrapper$WrapperLookup, net.minecraft.nbt.NbtElement);
+      Code:
+         0: getstatic     #358                // Field CODEC:Lcom/mojang/serialization/Codec;
+         3: aload_0
+         4: getstatic     #363                // Field net/minecraft/nbt/NbtOps.INSTANCE:Lnet/minecraft/nbt/NbtOps;
+         7: invokeinterface #367,  2          // InterfaceMethod net/minecraft/registry/RegistryWrapper$WrapperLookup.g
+etOps:(Lcom/mojang/serialization/DynamicOps;)Lnet/minecraft/registry/RegistryOps;
+        12: aload_1
+        13: invokeinterface #373,  3          // InterfaceMethod com/mojang/serialization/Codec.parse:(Lcom/mojang/seri
+alization/DynamicOps;Ljava/lang/Object;)Lcom/mojang/serialization/DataResult;
+        18: invokedynamic #385,  0            // InvokeDynamic #4:accept:()Ljava/util/function/Consumer;
+        23: invokeinterface #389,  2          // InterfaceMethod 
+com/mojang/serialization/DataResult.resultOrPartial:(Ljava/util/function/Consumer;)Ljava/util/Optional;
+        28: areturn
+  
+>   public static net.minecraft.item.ItemStack fromNbtOrEmpty(net.minecraft.registry.RegistryWrapper$WrapperLookup, 
+net.minecraft.nbt.NbtCompound);
+      Code:
+         0: aload_1
+         1: invokevirtual #396                // Method net/minecraft/nbt/NbtCompound.isEmpty:()Z
+         4: ifeq          11
+         7: getstatic     #398                // Field EMPTY:Lnet/minecraft/item/ItemStack;
+        10: areturn
+        11: aload_0
+        12: aload_1
+>       13: invokestatic  #400                // Method 
+fromNbt:(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;Lnet/minecraft/nbt/NbtElement;)Ljava/util/Optional;
+        16: getstatic     #398                // Field EMPTY:Lnet/minecraft/item/ItemStack;
+        19: invokevirtual #405                // Method 
+java/util/Optional.orElse:(Ljava/lang/Object;)Ljava/lang/Object;
+        22: checkcast     #2                  // class net/minecraft/item/ItemStack
+        25: areturn
+  
+    public boolean isEmpty();
+      Code:
+         0: aload_0
+         1: getstatic     #398                // Field EMPTY:Lnet/minecraft/item/ItemStack;
+         4: if_acmpeq     24
+         7: aload_0
+         8: getfield      #263                // Field item:Lnet/minecraft/item/Item;
+        11: getstatic     #411                // Field net/minecraft/item/Items.AIR:Lnet/minecraft/item/Item;
+        14: if_acmpeq     24
+        17: aload_0
+         7: invokevirtual #582                // Method net/minecraft/item/Item.finishUsing:(Lnet/minecraft/item/ItemSt
+ack;Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)Lnet/minecraft/item/ItemStack;
+        10: areturn
+  
+>   public net.minecraft.nbt.NbtElement encode(net.minecraft.registry.RegistryWrapper$WrapperLookup, 
+net.minecraft.nbt.NbtElement);
+      Code:
+         0: aload_0
+         1: invokevirtual #203                // Method isEmpty:()Z
+         4: ifeq          18
+         7: new           #588                // class java/lang/IllegalStateException
+        10: dup
+>       11: ldc_w         #590                // String Cannot encode empty ItemStack
+        14: invokespecial #592                // Method java/lang/IllegalStateException."<init>":(Ljava/lang/String;)V
+        17: athrow
+        18: getstatic     #358                // Field CODEC:Lcom/mojang/serialization/Codec;
+        21: aload_0
+        22: aload_1
+        23: getstatic     #363                // Field net/minecraft/nbt/NbtOps.INSTANCE:Lnet/minecraft/nbt/NbtOps;
+        26: invokeinterface #367,  2          // InterfaceMethod net/minecraft/registry/RegistryWrapper$WrapperLookup.g
+etOps:(Lcom/mojang/serialization/DynamicOps;)Lnet/minecraft/registry/RegistryOps;
+        31: aload_2
+>       32: invokeinterface #595,  4          // InterfaceMethod com/mojang/serialization/Codec.encode:(Ljava/lang/Obje
+ct;Lcom/mojang/serialization/DynamicOps;Ljava/lang/Object;)Lcom/mojang/serialization/DataResult;
+        37: invokeinterface #598,  1          // InterfaceMethod 
+com/mojang/serialization/DataResult.getOrThrow:()Ljava/lang/Object;
+        42: checkcast     #600                // class net/minecraft/nbt/NbtElement
+        45: areturn
+  
+>   public net.minecraft.nbt.NbtElement encode(net.minecraft.registry.RegistryWrapper$WrapperLookup);
+      Code:
+         0: aload_0
+         1: invokevirtual #203                // Method isEmpty:()Z
+         4: ifeq          18
+         7: new           #588                // class java/lang/IllegalStateException
+        10: dup
+>       11: ldc_w         #590                // String Cannot encode empty ItemStack
+        14: invokespecial #592                // Method java/lang/IllegalStateException."<init>":(Ljava/lang/String;)V
+        17: athrow
+        18: getstatic     #358                // Field CODEC:Lcom/mojang/serialization/Codec;
+        21: aload_1
+        22: getstatic     #363                // Field net/minecraft/nbt/NbtOps.INSTANCE:Lnet/minecraft/nbt/NbtOps;
+        25: invokeinterface #367,  2          // InterfaceMethod net/minecraft/registry/RegistryWrapper$WrapperLookup.g
+etOps:(Lcom/mojang/serialization/DynamicOps;)Lnet/minecraft/registry/RegistryOps;
+        30: aload_0
+>       31: invokeinterface #604,  3          // InterfaceMethod com/mojang/serialization/Codec.encodeStart:(Lcom/mojan
+g/serialization/DynamicOps;Ljava/lang/Object;)Lcom/mojang/serialization/DataResult;
+        36: invokeinterface #598,  1          // InterfaceMethod 
+com/mojang/serialization/DataResult.getOrThrow:()Ljava/lang/Object;
+        41: checkcast     #600                // class net/minecraft/nbt/NbtElement
+        44: areturn
+  
+>   public net.minecraft.nbt.NbtElement encodeAllowEmpty(net.minecraft.registry.RegistryWrapper$WrapperLookup);
+      Code:
+         0: aload_0
+         1: invokevirtual #203                // Method isEmpty:()Z
+         4: ifeq          15
+         7: new           #395                // class net/minecraft/nbt/NbtCompound
+        10: dup
+        11: invokespecial #606                // Method net/minecraft/nbt/NbtCompound."<init>":()V
+        14: areturn
+        15: aload_0
+        16: aload_1
+        17: new           #395                // class net/minecraft/nbt/NbtCompound
+        20: dup
+        21: invokespecial #606                // Method net/minecraft/nbt/NbtCompound."<init>":()V
+>       24: invokevirtual #608                // Method encode:(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;L
+net/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;
+        27: areturn
+  
+    public int getMaxCount();
+      Code:
+         0: aload_0
+         1: getstatic     #286                // Field 
+net/minecraft/component/DataComponentTypes.MAX_STACK_SIZE:Lnet/minecraft/component/ComponentType;
+         4: iconst_1
+         5: invokestatic  #292                // Method java/lang/Integer.valueOf:(I)Ljava/lang/Integer;
+         8: invokevirtual #609                // Method 
+getOrDefault:(Lnet/minecraft/component/ComponentType;Ljava/lang/Object;)Ljava/lang/Object;
+        11: checkcast     #288                // class java/lang/Integer
+        14: invokevirtual #299                // Method java/lang/Integer.intValue:()I
+        17: ireturn
+  
+    public boolean isStackable();
+      Code:
+
+
+

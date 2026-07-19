@@ -6,10 +6,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.registry.RegistryOps;
-import net.minecraft.registry.RegistryWrapper;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -33,8 +30,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  *
  * FIX:
  * 1. Replace all 4 codecs at <clinit> RETURN with wrappers that handle count > 99.
+ *    The wrapper passes `prefix` through to original.encode(), preserving "Slot" bytes
+ *    in PlayerInventory.writeNbt.
  * 2. Bypass validate() count check entirely (keep component validation).
- * 3. Safety net on encode() methods.
+ *
+ * IMPORTANT: NO encode() safety net. The wrapped codec correctly handles prefix
+ * preservation. An earlier encode safety net used CODEC.encodeStart() which created
+ * a fresh compound WITHOUT the "Slot" byte, causing all large-stack items to land
+ * in slot 0 on world load.
  */
 @Mixin(value = ItemStack.class, priority = 1500)
 public abstract class ItemStackCodecFixMixin {
@@ -143,57 +146,6 @@ public abstract class ItemStackCodecFixMixin {
             cir.setReturnValue(componentResult.map(unit -> stack));
         }
         cir.setReturnValue(DataResult.success(stack));
-    }
-
-    /**
-     * Phase 3: Safety net on encode(Lookup, NbtElement).
-     * If code calls stack.encode() directly instead of CODEC.encode(),
-     * this intercepts before any codec runs and handles large counts.
-     */
-    @Inject(method = "encode(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;Lnet/minecraft/nbt/NbtElement;)Lnet/minecraft/nbt/NbtElement;",
-            at = @At("HEAD"), cancellable = true)
-    private void overstacked$encodeTwoArg(
-            RegistryWrapper.WrapperLookup registries, NbtElement prefix,
-            CallbackInfoReturnable<NbtElement> cir) {
-        overstacked$handleEncode(registries, cir);
-    }
-
-    @Inject(method = "encode(Lnet/minecraft/registry/RegistryWrapper$WrapperLookup;)Lnet/minecraft/nbt/NbtElement;",
-            at = @At("HEAD"), cancellable = true)
-    private void overstacked$encodeOneArg(
-            RegistryWrapper.WrapperLookup registries,
-            CallbackInfoReturnable<NbtElement> cir) {
-        overstacked$handleEncode(registries, cir);
-    }
-
-    @Unique
-    private void overstacked$handleEncode(
-            RegistryWrapper.WrapperLookup registries,
-            CallbackInfoReturnable<NbtElement> cir) {
-
-        ItemStack self = (ItemStack) (Object) this;
-        int originalCount = self.getCount();
-
-        if (originalCount <= 99) {
-            return;
-        }
-
-        self.setCount(1);
-        DataResult<NbtElement> result = CODEC
-                .encodeStart(RegistryOps.of(NbtOps.INSTANCE, registries), self);
-        self.setCount(originalCount);
-
-        if (result.isError()) {
-            return;
-        }
-
-        NbtElement encoded = result.result().get();
-        if (encoded instanceof NbtCompound compound) {
-            compound.putInt("count", originalCount);
-            cir.setReturnValue(compound);
-        } else {
-            cir.setReturnValue(encoded);
-        }
     }
 
     @Unique
