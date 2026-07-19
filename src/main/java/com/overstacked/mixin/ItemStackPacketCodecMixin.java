@@ -16,7 +16,7 @@ public class ItemStackPacketCodecMixin {
      * В 1.21.1 количество передается через VarInt, поэтому нам нужно просто разрешить
      * чтение и запись значений вплоть до Integer.MAX_VALUE.
      */
-    @Inject(method = "createPacketCodec", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "createExtraValidatingPacketCodec", at = @At("RETURN"), cancellable = true)
     private static void overstacked$expandPacketCodec(CallbackInfoReturnable<PacketCodec<RegistryByteBuf, ItemStack>> cir) {
         PacketCodec<RegistryByteBuf, ItemStack> original = cir.getReturnValue();
         
