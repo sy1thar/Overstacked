@@ -1,26 +1,19 @@
 package com.overstacked.mixin;
 
-import com.overstacked.config.OverstackedConfig;
-import net.minecraft.inventory.Inventory;
+import net.minecraft.world.Container;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
- * Overrides {@link Inventory#getMaxCountPerStack()} to return our config value.
- * NO isLoaded() guard — returns hardcoded default (1B) before config loads.
+ * Raises inventory capacity while the vanilla stack-aware overload applies item limits.
  */
-@Mixin(Inventory.class)
+@Mixin(Container.class)
 public interface InventoryMaxCountMixin {
 
-    @Inject(method = "getMaxCountPerStack", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getMaxCountPerStack()I", at = @At("RETURN"), cancellable = true)
     private void overstacked$overrideMaxCountPerStack(CallbackInfoReturnable<Integer> cir) {
-        OverstackedConfig config = OverstackedConfig.getInstance();
-        if (config.isLoaded()) {
-            cir.setReturnValue(config.getDefaultMaxStackSize());
-        } else {
-            cir.setReturnValue(1_000_000_000);
-        }
+        cir.setReturnValue(1_000_000_000);
     }
 }

@@ -1,8 +1,8 @@
 package com.overstacked.mixin;
 
 import com.overstacked.config.OverstackedConfig;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,7 +16,7 @@ public abstract class ItemEntityMergeMixin {
         OverstackedConfig config = OverstackedConfig.getInstance();
 
         ItemEntity self = (ItemEntity) (Object) this;
-        ItemStack stack = self.getStack();
+        ItemStack stack = self.getItem();
         int vanillaMax = OverstackedConfig.getVanillaMaxCount(stack.getItem());
 
         if (stack.getCount() > vanillaMax) {

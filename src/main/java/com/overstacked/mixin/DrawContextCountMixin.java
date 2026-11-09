@@ -1,16 +1,16 @@
 package com.overstacked.mixin;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.overstacked.util.NumberFormatUtil;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.HashMap;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.network.chat.Component;
 
 /**
  * Cached count rendering with 0.5x scaling.
@@ -25,13 +25,13 @@ import java.util.HashMap;
  * The Text cache is keyed by formatted String (1-3 chars). Total unique entries after
  * stabilization: ~220 (0-99 raw + ~900K-M values + 1B = bounded, finite set).
  */
-@Mixin(DrawContext.class)
+@Mixin(GuiGraphics.class)
 public abstract class DrawContextCountMixin {
 
-    private static final HashMap<String, Text> overstacked$textCache = new HashMap<>(256);
+    private static final HashMap<String, Component> overstacked$textCache = new HashMap<>(256);
 
     @Shadow
-    private MatrixStack matrices;
+    private PoseStack matrices;
 
     @Redirect(
             method = "drawItemInSlot(Lnet/minecraft/client/font/TextRenderer;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V",
@@ -55,8 +55,8 @@ public abstract class DrawContextCountMixin {
                     target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;IIIZ)I"
             )
     )
-    private int overstacked$scaleCountText(DrawContext self, TextRenderer textRenderer, String text, int x, int y, int color, boolean shadow) {
-        int textWidth = textRenderer.getWidth(text);
+    private int overstacked$scaleCountText(GuiGraphics self, Font textRenderer, String text, int x, int y, int color, boolean shadow) {
+        int textWidth = textRenderer.width(text);
 
         int slotX = x + textWidth - 17;
         int slotY = y - 9;
@@ -65,18 +65,18 @@ public abstract class DrawContextCountMixin {
         int screenX = slotCenterX - textWidth / 4;
         int screenY = slotY + 12;
 
-        matrices.push();
+        matrices.pushPose();
         matrices.translate(screenX, screenY, 0);
         matrices.scale(0.5f, 0.5f, 1.0f);
         matrices.translate(-screenX, -screenY, 0);
 
-        Text cachedText = overstacked$textCache.get(text);
+        Component cachedText = overstacked$textCache.get(text);
         if (cachedText == null) {
-            cachedText = Text.literal(text);
+            cachedText = Component.literal(text);
             overstacked$textCache.put(text, cachedText);
         }
-        int result = self.drawText(textRenderer, cachedText, screenX, screenY, color, shadow);
-        matrices.pop();
+        int result = self.drawString(textRenderer, cachedText, screenX, screenY, color, shadow);
+        matrices.popPose();
         return result;
     }
 }

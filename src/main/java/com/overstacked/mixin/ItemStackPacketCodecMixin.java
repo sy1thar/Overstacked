@@ -1,8 +1,8 @@
 package com.overstacked.mixin;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -17,12 +17,12 @@ public class ItemStackPacketCodecMixin {
      * чтение и запись значений вплоть до Integer.MAX_VALUE.
      */
     @Inject(method = "createExtraValidatingPacketCodec", at = @At("RETURN"), cancellable = true)
-    private static void overstacked$expandPacketCodec(CallbackInfoReturnable<PacketCodec<RegistryByteBuf, ItemStack>> cir) {
-        PacketCodec<RegistryByteBuf, ItemStack> original = cir.getReturnValue();
+    private static void overstacked$expandPacketCodec(CallbackInfoReturnable<StreamCodec<RegistryFriendlyByteBuf, ItemStack>> cir) {
+        StreamCodec<RegistryFriendlyByteBuf, ItemStack> original = cir.getReturnValue();
         
-        PacketCodec<RegistryByteBuf, ItemStack> expanded = new PacketCodec<>() {
+        StreamCodec<RegistryFriendlyByteBuf, ItemStack> expanded = new StreamCodec<>() {
             @Override
-            public ItemStack decode(RegistryByteBuf buf) {
+            public ItemStack decode(RegistryFriendlyByteBuf buf) {
                 // Позволяем ванильному декодеру работать без краша при больших числах
                 try {
                     return original.decode(buf);
@@ -32,7 +32,7 @@ public class ItemStackPacketCodecMixin {
             }
 
             @Override
-            public void encode(RegistryByteBuf buf, ItemStack stack) {
+            public void encode(RegistryFriendlyByteBuf buf, ItemStack stack) {
                 original.encode(buf, stack);
             }
         };

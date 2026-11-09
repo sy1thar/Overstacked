@@ -32,7 +32,7 @@
 
 Overstacked features a flexible hybrid configuration architecture designed for both casual players and modpack creators:
 
-1. **In-Game Quick Setup:** Run the command `/overstacked quicksetup` in chat (requires OP / Singleplayer) to open a quick menu and toggle between 3 predefined preset categories.
+1. **In-Game Quick Setup:** Open Mods → Overstacked → Configure through Mod Menu and Cloth Config. Changing server settings requires operator permission level 2.
 2. **XML Rules Engine:** For advanced tuning, manually edit your stack rules using clean XML markup inside `run/config/overstacked-rules.xml`.
 3. **JSON Template Overrides:** Force-stack normally unstackable items (e.g., Totems of Undying, Ender Pearls, Potions, custom modded items, or `#tags`) by adding them directly into `overstacked-template-overrides.json`.
 
@@ -70,7 +70,7 @@ Overstacked features a flexible hybrid configuration architecture designed for b
 
 Overstacked использует гибкую гибридную систему конфигурации, удобную как для обычных игроков, так и для авторов сборкок:
 
-1. **Быстрая настройка в игре:** Введите команду `/overstacked quicksetup` в чате (требуются права оператора), чтобы быстро переключаться между 3 готовыми пресетами настроек.
+1. **Быстрая настройка в игре:** Откройте Mods → Overstacked → Configure через Mod Menu и Cloth Config. Изменение серверных настроек требует прав оператора уровня 2.
 2. **Движок правил XML:** Для тонкой ручной настройки редактируйте параметры стаков в файле `run/config/overstacked-rules.xml`.
 3. **Исключения через JSON (Overrides):** Чтобы сделать стакаемыми нестандартные предметы (Тотемы бессмертия, зелья, эндер-жемчуг, лут из других модов или целые теги `#tags`), просто добавьте их в файл `overstacked-template-overrides.json`.
 

@@ -5,24 +5,6 @@ import com.overstacked.network.ConfigSyncPayload;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.Item;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.FishingRodItem;
-import net.minecraft.item.FlintAndSteelItem;
-import net.minecraft.item.MaceItem;
-import net.minecraft.item.RangedWeaponItem;
-import net.minecraft.item.ShearsItem;
-import net.minecraft.item.ShieldItem;
-import net.minecraft.item.SwordItem;
-import net.minecraft.item.ToolItem;
-import net.minecraft.item.TridentItem;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -34,6 +16,22 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.FlintAndSteelItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.TridentItem;
 
 public final class OverstackedConfig {
 
@@ -65,9 +63,9 @@ public final class OverstackedConfig {
     );
     private static final Set<String> TOTEM_GROUP = Set.of("minecraft:totem_of_undying");
 
-    private static final TagKey<Item> ENCHANTABLE_WEAPON = TagKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "enchantable/weapon"));
-    private static final TagKey<Item> ENCHANTABLE_DURABILITY = TagKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "enchantable/durability"));
-    private static final TagKey<Item> ENCHANTABLE_MINING = TagKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "enchantable/mining"));
+    private static final TagKey<Item> ENCHANTABLE_WEAPON = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", "enchantable/weapon"));
+    private static final TagKey<Item> ENCHANTABLE_DURABILITY = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", "enchantable/durability"));
+    private static final TagKey<Item> ENCHANTABLE_MINING = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", "enchantable/mining"));
 
     private OverstackedConfig() {}
 
@@ -173,7 +171,7 @@ public final class OverstackedConfig {
     }
 
     public static int getVanillaMaxCount(Item item) {
-        return item.getComponents().getOrDefault(DataComponentTypes.MAX_STACK_SIZE, 1);
+        return item.components().getOrDefault(DataComponents.MAX_STACK_SIZE, 1);
     }
 
     /* ---- network payload ----------------------------------------------- */
@@ -188,7 +186,7 @@ public final class OverstackedConfig {
 
     /* ---- mutators ------------------------------------------------------ */
 
-    public void setDefaultMaxStackSize(int value)      { this.defaultMaxStackSize = Math.max(1, value); resolvedCache.clear(); }
+    public void setDefaultMaxStackSize(int value)      { this.defaultMaxStackSize = Math.clamp(value, 1, 1_000_000_000); resolvedCache.clear(); }
     public void setStackEnchantedBooks(boolean v)       { this.stackEnchantedBooks = v; resolvedCache.clear(); }
     public void setStackEnderPearlsSnowballs(boolean v) { this.stackEnderPearlsSnowballs = v; resolvedCache.clear(); }
     public void setStackBucketsPotions(boolean v)       { this.stackBucketsPotions = v; resolvedCache.clear(); }
@@ -196,12 +194,12 @@ public final class OverstackedConfig {
     public void setStackToolsArmor(boolean v)           { this.stackToolsArmor = v; resolvedCache.clear(); }
 
     public void addItemOverride(String id, int maxStack) {
-        itemOverrides.put(id, Math.max(1, maxStack));
+        itemOverrides.put(id, Math.clamp(maxStack, 1, 1_000_000_000));
         resolvedCache.clear();
     }
 
     public void addTagOverride(String tag, int maxStack) {
-        tagOverrides.put(tag, Math.max(1, maxStack));
+        tagOverrides.put(tag, Math.clamp(maxStack, 1, 1_000_000_000));
         resolvedCache.clear();
     }
 
@@ -211,7 +209,7 @@ public final class OverstackedConfig {
     /* ---- internals ----------------------------------------------------- */
 
     private int resolveForItem(Item item) {
-        String id = Registries.ITEM.getId(item).toString();
+        String id = BuiltInRegistries.ITEM.getKey(item).toString();
 
         Integer exact = itemOverrides.get(id);
         if (exact != null) return exact;
@@ -220,9 +218,9 @@ public final class OverstackedConfig {
             String rawTag = entry.getKey().startsWith("#")
                     ? entry.getKey().substring(1) : entry.getKey();
             try {
-                TagKey<Item> tagKey = TagKey.of(RegistryKeys.ITEM, Identifier.of(rawTag));
-                RegistryEntry.Reference<Item> ref = item.getRegistryEntry();
-                if (ref.isIn(tagKey)) return entry.getValue();
+                TagKey<Item> tagKey = TagKey.create(Registries.ITEM, ResourceLocation.parse(rawTag));
+                Holder.Reference<Item> ref = item.builtInRegistryHolder();
+                if (ref.is(tagKey)) return entry.getValue();
             } catch (Exception ignored) {}
         }
 
@@ -308,18 +306,18 @@ public final class OverstackedConfig {
     }
 
     private static boolean isWeaponOrTool(Item item) {
-        if (item instanceof SwordItem || item instanceof ToolItem ||
-            item instanceof ArmorItem || item instanceof RangedWeaponItem ||
+        if (item instanceof SwordItem || item instanceof TieredItem ||
+            item instanceof ArmorItem || item instanceof ProjectileWeaponItem ||
             item instanceof ShieldItem || item instanceof TridentItem ||
             item instanceof FishingRodItem || item instanceof ShearsItem ||
             item instanceof FlintAndSteelItem) {
             return true;
         }
-        RegistryEntry.Reference<Item> ref = item.getRegistryEntry();
-        if (ref.isIn(ENCHANTABLE_WEAPON) || ref.isIn(ENCHANTABLE_DURABILITY) || ref.isIn(ENCHANTABLE_MINING)) {
+        Holder.Reference<Item> ref = item.builtInRegistryHolder();
+        if (ref.is(ENCHANTABLE_WEAPON) || ref.is(ENCHANTABLE_DURABILITY) || ref.is(ENCHANTABLE_MINING)) {
             return true;
         }
-        if (item.getComponents().contains(DataComponentTypes.MAX_DAMAGE)) return true;
+        if (item.components().has(DataComponents.MAX_DAMAGE)) return true;
         return false;
     }
 }

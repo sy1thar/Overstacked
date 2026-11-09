@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "com.overstacked.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "FromNbtSafetyMixin",
     "InventoryMaxCountMixin",
@@ -10,9 +10,7 @@
     "ItemScattererMixin",
     "ItemStackCodecFixMixin",
     "ItemStackMaxCountMixin",
-    "ItemStackPacketCodecMixin",
-    "ScreenHandlerSafeOpsMixin",
-    "SlotMaxCountMixin"
+    "ItemStackPacketCodecMixin"
   ],
   "client": [
     "DrawContextCountMixin",

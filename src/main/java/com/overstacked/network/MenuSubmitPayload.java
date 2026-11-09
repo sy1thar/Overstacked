@@ -1,12 +1,11 @@
 package com.overstacked.network;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 public record MenuSubmitPayload(
         int defaultMaxStackSize,
@@ -17,15 +16,15 @@ public record MenuSubmitPayload(
         boolean stackToolsArmor,
         Map<String, Integer> itemOverrides,
         Map<String, Integer> tagOverrides
-) implements CustomPayload {
+) implements CustomPacketPayload {
 
-    public static final CustomPayload.Id<MenuSubmitPayload> ID =
-            new CustomPayload.Id<>(Identifier.of("overstacked", "menu_submit"));
+    public static final CustomPacketPayload.Type<MenuSubmitPayload> ID =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("overstacked", "menu_submit"));
 
-    public static final PacketCodec<PacketByteBuf, MenuSubmitPayload> CODEC =
-            new PacketCodec<>() {
+    public static final StreamCodec<FriendlyByteBuf, MenuSubmitPayload> CODEC =
+            new StreamCodec<>() {
                 @Override
-                public MenuSubmitPayload decode(PacketByteBuf buf) {
+                public MenuSubmitPayload decode(FriendlyByteBuf buf) {
                     int defaultMax = buf.readInt();
                     boolean eb  = buf.readBoolean();
                     boolean eps = buf.readBoolean();
@@ -36,20 +35,20 @@ public record MenuSubmitPayload(
                     int itemCount = buf.readVarInt();
                     Map<String, Integer> items = new LinkedHashMap<>(itemCount);
                     for (int i = 0; i < itemCount; i++) {
-                        items.put(buf.readString(), buf.readVarInt());
+                        items.put(buf.readUtf(), buf.readVarInt());
                     }
 
                     int tagCount = buf.readVarInt();
                     Map<String, Integer> tags = new LinkedHashMap<>(tagCount);
                     for (int i = 0; i < tagCount; i++) {
-                        tags.put(buf.readString(), buf.readVarInt());
+                        tags.put(buf.readUtf(), buf.readVarInt());
                     }
 
                     return new MenuSubmitPayload(defaultMax, eb, eps, bp, tot, ta, items, tags);
                 }
 
                 @Override
-                public void encode(PacketByteBuf buf, MenuSubmitPayload payload) {
+                public void encode(FriendlyByteBuf buf, MenuSubmitPayload payload) {
                     buf.writeInt(payload.defaultMaxStackSize);
                     buf.writeBoolean(payload.stackEnchantedBooks);
                     buf.writeBoolean(payload.stackEnderPearlsSnowballs);
@@ -59,20 +58,20 @@ public record MenuSubmitPayload(
 
                     buf.writeVarInt(payload.itemOverrides.size());
                     payload.itemOverrides.forEach((key, value) -> {
-                        buf.writeString(key);
+                        buf.writeUtf(key);
                         buf.writeVarInt(value);
                     });
 
                     buf.writeVarInt(payload.tagOverrides.size());
                     payload.tagOverrides.forEach((key, value) -> {
-                        buf.writeString(key);
+                        buf.writeUtf(key);
                         buf.writeVarInt(value);
                     });
                 }
             };
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

@@ -1,12 +1,11 @@
 package com.overstacked.network;
 
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 public record ConfigSyncPayload(
         int defaultMaxStackSize,
@@ -17,15 +16,15 @@ public record ConfigSyncPayload(
         boolean stackToolsArmor,
         Map<String, Integer> itemOverrides,
         Map<String, Integer> tagOverrides
-) implements CustomPayload {
+) implements CustomPacketPayload {
 
-    public static final CustomPayload.Id<ConfigSyncPayload> ID =
-            new CustomPayload.Id<>(Identifier.of("overstacked", "config_sync"));
+    public static final CustomPacketPayload.Type<ConfigSyncPayload> ID =
+            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("overstacked", "config_sync"));
 
-    public static final PacketCodec<PacketByteBuf, ConfigSyncPayload> CODEC =
-            new PacketCodec<>() {
+    public static final StreamCodec<FriendlyByteBuf, ConfigSyncPayload> CODEC =
+            new StreamCodec<>() {
                 @Override
-                public ConfigSyncPayload decode(PacketByteBuf buf) {
+                public ConfigSyncPayload decode(FriendlyByteBuf buf) {
                     int defaultMax = buf.readInt();
                     boolean eb  = buf.readBoolean();
                     boolean eps = buf.readBoolean();
@@ -36,20 +35,20 @@ public record ConfigSyncPayload(
                     int itemCount = buf.readVarInt();
                     Map<String, Integer> items = new LinkedHashMap<>(itemCount);
                     for (int i = 0; i < itemCount; i++) {
-                        items.put(buf.readString(), buf.readVarInt());
+                        items.put(buf.readUtf(), buf.readVarInt());
                     }
 
                     int tagCount = buf.readVarInt();
                     Map<String, Integer> tags = new LinkedHashMap<>(tagCount);
                     for (int i = 0; i < tagCount; i++) {
-                        tags.put(buf.readString(), buf.readVarInt());
+                        tags.put(buf.readUtf(), buf.readVarInt());
                     }
 
                     return new ConfigSyncPayload(defaultMax, eb, eps, bp, tot, ta, items, tags);
                 }
 
                 @Override
-                public void encode(PacketByteBuf buf, ConfigSyncPayload payload) {
+                public void encode(FriendlyByteBuf buf, ConfigSyncPayload payload) {
                     buf.writeInt(payload.defaultMaxStackSize);
                     buf.writeBoolean(payload.stackEnchantedBooks);
                     buf.writeBoolean(payload.stackEnderPearlsSnowballs);
@@ -59,20 +58,20 @@ public record ConfigSyncPayload(
 
                     buf.writeVarInt(payload.itemOverrides.size());
                     payload.itemOverrides.forEach((key, value) -> {
-                        buf.writeString(key);
+                        buf.writeUtf(key);
                         buf.writeVarInt(value);
                     });
 
                     buf.writeVarInt(payload.tagOverrides.size());
                     payload.tagOverrides.forEach((key, value) -> {
-                        buf.writeString(key);
+                        buf.writeUtf(key);
                         buf.writeVarInt(value);
                     });
                 }
             };
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return ID;
     }
 }

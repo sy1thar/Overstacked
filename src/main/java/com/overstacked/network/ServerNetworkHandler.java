@@ -3,15 +3,19 @@ package com.overstacked.network;
 import com.overstacked.Overstacked;
 import com.overstacked.config.OverstackedConfig;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 
 public final class ServerNetworkHandler {
 
     private ServerNetworkHandler() {}
 
     public static void handleMenuSubmit(MenuSubmitPayload payload, ServerPlayNetworking.Context context) {
-        ServerPlayerEntity player = context.player();
+        ServerPlayer player = context.player();
         context.player().server.execute(() -> {
+            if (!player.hasPermissions(2)) {
+                ServerPlayNetworking.send(player, OverstackedConfig.getInstance().toPayload());
+                return;
+            }
             OverstackedConfig config = OverstackedConfig.getInstance();
             config.setDefaultMaxStackSize(payload.defaultMaxStackSize());
             config.setStackEnchantedBooks(payload.stackEnchantedBooks());
@@ -33,7 +37,7 @@ public final class ServerNetworkHandler {
                     payload.itemOverrides().size(), payload.tagOverrides().size());
 
             ConfigSyncPayload syncPayload = config.toPayload();
-            context.server().getPlayerManager().getPlayerList().forEach(p ->
+            context.server().getPlayerList().getPlayers().forEach(p ->
                     ServerPlayNetworking.send(p, syncPayload));
         });
     }

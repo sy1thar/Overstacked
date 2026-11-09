@@ -4,8 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -16,23 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/**
- * Fixes item deletion caused by vanilla Codec validation on large stacks.
- *
- * ItemStack has 4 static Codec fields:
- *   CODEC                   — 2-field: {id, components}. NO count. Used by fromNbt() and encode().
- *   UNCOUNTED_CODEC         — 3-field: {id, count(rangedInt 1-99), components}. Has count.
- *   VALIDATED_CODEC         — CODEC.validate(ItemStack::validate)
- *   VALIDATED_UNCOUNTED_CODEC — UNCOUNTED_CODEC.validate(ItemStack::validate)
- *
- * validate() checks: getCount() > getMaxCount() → DataResult.error → item deleted.
- *
- * FIX:
- * 1. Replace all 4 codecs at <clinit> RETURN with wrappers that handle count > 99.
- *    The wrapper passes `prefix` through to original.encode(), preserving "Slot" bytes
- *    in PlayerInventory.writeNbt.
- * 2. Bypass validate() count check entirely (keep component validation).
- */
+/** Preserves large stack counts through both NBT and JSON codecs. */
 @Mixin(value = ItemStack.class, priority = 1500)
 public abstract class ItemStackCodecFixMixin {
 
@@ -56,15 +39,14 @@ public abstract class ItemStackCodecFixMixin {
 
     @Shadow
     public static DataResult<net.minecraft.util.Unit> validateComponents(
-            net.minecraft.component.ComponentMap components) { return null; }
+            net.minecraft.core.component.DataComponentMap components) { return null; }
 
     @Inject(method = "<clinit>", at = @At("RETURN"))
     private static void overstacked$replaceCodecs(CallbackInfo ci) {
         final Codec<ItemStack> originalCodec = CODEC;
-        final Codec<ItemStack> originalUncounted = UNCOUNTED_CODEC;
 
         CODEC = overstacked$wrapCodec(originalCodec, "CODEC");
-        UNCOUNTED_CODEC = overstacked$wrapCodec(originalUncounted, "UNCOUNTED_CODEC");
+        // UNCOUNTED_CODEC intentionally omits count and retains vanilla semantics.
 
         VALIDATED_CODEC = CODEC.validate(ItemStackCodecFixMixin::validate);
         VALIDATED_UNCOUNTED_CODEC = UNCOUNTED_CODEC.validate(ItemStackCodecFixMixin::validate);
@@ -81,16 +63,9 @@ public abstract class ItemStackCodecFixMixin {
                     return original.encode(input, ops, prefix);
                 }
 
-                input.setCount(1);
-                DataResult<V> result = original.encode(input, ops, prefix);
-                input.setCount(originalCount);
-
-                return result.map(encoded -> {
-                    if (encoded instanceof NbtCompound compound) {
-                        compound.putInt("count", originalCount);
-                    }
-                    return encoded;
-                });
+                ItemStack copy = input.copyWithCount(1);
+                return original.encode(copy, ops, prefix)
+                        .map(encoded -> ops.set(encoded, "count", ops.createInt(originalCount)));
             }
 
             @Override
@@ -132,24 +107,13 @@ public abstract class ItemStackCodecFixMixin {
     }
 
     @Unique
-    @SuppressWarnings("unchecked")
     private static <V> int overstacked$extractCount(DynamicOps<V> ops, V input) {
-        if (input instanceof NbtCompound compound) {
-            if (compound.contains("count", 99)) {
-                return compound.getInt("count");
-            }
-        }
-        return 1;
+        return ops.get(input, "count").flatMap(ops::getNumberValue)
+                .map(Number::intValue).result().orElse(1);
     }
 
     @Unique
-    @SuppressWarnings("unchecked")
     private static <V> V overstacked$withCount(DynamicOps<V> ops, V input, int count) {
-        if (input instanceof NbtCompound compound) {
-            NbtCompound copy = compound.copy();
-            copy.putInt("count", count);
-            return (V) copy;
-        }
-        return null;
+        return ops.set(input, "count", ops.createInt(count));
     }
 }
