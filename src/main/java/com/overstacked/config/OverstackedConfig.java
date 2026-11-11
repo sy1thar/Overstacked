@@ -20,7 +20,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.FishingRodItem;
@@ -63,9 +63,9 @@ public final class OverstackedConfig {
     );
     private static final Set<String> TOTEM_GROUP = Set.of("minecraft:totem_of_undying");
 
-    private static final TagKey<Item> ENCHANTABLE_WEAPON = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", "enchantable/weapon"));
-    private static final TagKey<Item> ENCHANTABLE_DURABILITY = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", "enchantable/durability"));
-    private static final TagKey<Item> ENCHANTABLE_MINING = TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("minecraft", "enchantable/mining"));
+    private static final TagKey<Item> ENCHANTABLE_WEAPON = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("minecraft", "enchantable/weapon"));
+    private static final TagKey<Item> ENCHANTABLE_DURABILITY = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("minecraft", "enchantable/durability"));
+    private static final TagKey<Item> ENCHANTABLE_MINING = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("minecraft", "enchantable/mining"));
 
     private OverstackedConfig() {}
 
@@ -218,7 +218,7 @@ public final class OverstackedConfig {
             String rawTag = entry.getKey().startsWith("#")
                     ? entry.getKey().substring(1) : entry.getKey();
             try {
-                TagKey<Item> tagKey = TagKey.create(Registries.ITEM, ResourceLocation.parse(rawTag));
+                TagKey<Item> tagKey = TagKey.create(Registries.ITEM, Identifier.parse(rawTag));
                 Holder.Reference<Item> ref = item.builtInRegistryHolder();
                 if (ref.is(tagKey)) return entry.getValue();
             } catch (Exception ignored) {}

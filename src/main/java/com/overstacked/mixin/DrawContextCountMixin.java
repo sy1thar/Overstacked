@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import java.util.HashMap;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 /**
@@ -25,7 +25,7 @@ import net.minecraft.network.chat.Component;
  * The Text cache is keyed by formatted String (1-3 chars). Total unique entries after
  * stabilization: ~220 (0-99 raw + ~900K-M values + 1B = bounded, finite set).
  */
-@Mixin(GuiGraphics.class)
+@Mixin(GuiGraphicsExtractor.class)
 public abstract class DrawContextCountMixin {
 
     private static final HashMap<String, Component> overstacked$textCache = new HashMap<>(256);
@@ -55,7 +55,7 @@ public abstract class DrawContextCountMixin {
                     target = "Lnet/minecraft/client/gui/DrawContext;drawText(Lnet/minecraft/client/font/TextRenderer;Ljava/lang/String;IIIZ)I"
             )
     )
-    private int overstacked$scaleCountText(GuiGraphics self, Font textRenderer, String text, int x, int y, int color, boolean shadow) {
+    private int overstacked$scaleCountText(GuiGraphicsExtractor self, Font textRenderer, String text, int x, int y, int color, boolean shadow) {
         int textWidth = textRenderer.width(text);
 
         int slotX = x + textWidth - 17;

@@ -5,7 +5,7 @@ import java.util.Map;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record MenuSubmitPayload(
         int defaultMaxStackSize,
@@ -19,7 +19,7 @@ public record MenuSubmitPayload(
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<MenuSubmitPayload> ID =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("overstacked", "menu_submit"));
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("overstacked", "menu_submit"));
 
     public static final StreamCodec<FriendlyByteBuf, MenuSubmitPayload> CODEC =
             new StreamCodec<>() {

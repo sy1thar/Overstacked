@@ -5,7 +5,7 @@ import java.util.Map;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record ConfigSyncPayload(
         int defaultMaxStackSize,
@@ -19,7 +19,7 @@ public record ConfigSyncPayload(
 ) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<ConfigSyncPayload> ID =
-            new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath("overstacked", "config_sync"));
+            new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath("overstacked", "config_sync"));
 
     public static final StreamCodec<FriendlyByteBuf, ConfigSyncPayload> CODEC =
             new StreamCodec<>() {

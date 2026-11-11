@@ -11,8 +11,8 @@ public final class NetworkHandler {
     private NetworkHandler() {}
 
     public static void register() {
-        PayloadTypeRegistry.playS2C().register(ConfigSyncPayload.ID, ConfigSyncPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(MenuSubmitPayload.ID, MenuSubmitPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(ConfigSyncPayload.ID, ConfigSyncPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MenuSubmitPayload.ID, MenuSubmitPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(MenuSubmitPayload.ID, ServerNetworkHandler::handleMenuSubmit);
 

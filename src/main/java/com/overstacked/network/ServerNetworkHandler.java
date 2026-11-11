@@ -11,7 +11,7 @@ public final class ServerNetworkHandler {
 
     public static void handleMenuSubmit(MenuSubmitPayload payload, ServerPlayNetworking.Context context) {
         ServerPlayer player = context.player();
-        context.player().server.execute(() -> {
+        context.server().execute(() -> {
             if (!player.hasPermissions(2)) {
                 ServerPlayNetworking.send(player, OverstackedConfig.getInstance().toPayload());
                 return;
