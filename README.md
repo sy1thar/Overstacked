@@ -38,9 +38,9 @@ Overstacked features a flexible hybrid configuration architecture designed for b
 
 ### 📦 Requirements & Installation
 
-1. Install [Fabric Loader](https://fabricmc.net/) `>= 0.16.0` for Minecraft `1.21.1`.
+1. Install [Fabric Loader](https://fabricmc.net/) `>= 0.16.0` (or `>= 0.20.1` for Minecraft `26.3`).
 2. Download and install [Fabric API](https://modrinth.com/mod/fabric-api).
-3. Place the `Overstacked.jar` file into your `mods/` folder on **both** client and server:
+3. Place the matching version of `overstacked-1.1.0+<mc>.jar` from `releases/` (or `releases/legacy/` for `1.20.1`–`26.2`) into your `mods/` folder on **both** client and server:
    * **Windows:** `%appdata%\.minecraft\mods`
    * **Mac:** `~/Library/Application Support/minecraft/mods`
    * **Linux:** `~/.minecraft/mods`
@@ -76,9 +76,9 @@ Overstacked использует гибкую гибридную систему 
 
 ### 📦 Требования и установка
 
-1. Установите [Fabric Loader](https://fabricmc.net/) `>= 0.16.0` для Minecraft `1.21.1`.
+1. Установите [Fabric Loader](https://fabricmc.net/) `>= 0.16.0` (или `>= 0.20.1` для Minecraft `26.3`).
 2. Скачайте и установите [Fabric API](https://modrinth.com/mod/fabric-api).
-3. Поместите файл `Overstacked.jar` в папку `mods/` **как на клиенте, так и на сервере**:
+3. Поместите нужный файл `overstacked-1.1.0+<mc>.jar` из `releases/` (или `releases/legacy/` для `1.20.1`–`26.2`) в папку `mods/` **как на клиенте, так и на сервере**:
    * **Windows:** `%appdata%\.minecraft\mods`
    * **Mac:** `~/Library/Application Support/minecraft/mods`
    * **Linux:** `~/.minecraft/mods`
