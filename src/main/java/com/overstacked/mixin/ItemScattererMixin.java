@@ -15,13 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Containers.class)
 public abstract class ItemScattererMixin {
 
-    @Inject(method = "spawn(Lnet/minecraft/world/World;DDDLnet/minecraft/inventory/Inventory;)V",
+    @Inject(method = "dropContents(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/Container;)V",
             at = @At("HEAD"), cancellable = true)
     private static void overstacked$preserveLargeStacks(
             Level world, double x, double y, double z,
             Container inventory, CallbackInfo ci) {
-
-        OverstackedConfig config = OverstackedConfig.getInstance();
 
         boolean hasLargeStack = false;
         for (int i = 0; i < inventory.getContainerSize(); i++) {
@@ -33,7 +31,7 @@ public abstract class ItemScattererMixin {
         }
         if (!hasLargeStack) return;
 
-        RandomSource random = world.random;
+        RandomSource random = world.getRandom();
         for (int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack stack = inventory.getItem(i);
             if (stack.isEmpty()) continue;

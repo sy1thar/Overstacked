@@ -3,14 +3,14 @@
   "package": "com.overstacked.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
-    "FromNbtSafetyMixin",
     "InventoryMaxCountMixin",
     "ItemEntityMergeMixin",
     "ItemMaxStackSizeMixin",
     "ItemScattererMixin",
     "ItemStackCodecFixMixin",
     "ItemStackMaxCountMixin",
-    "ItemStackPacketCodecMixin"
+    "ItemStackPacketCodecMixin",
+    "SlotMaxCountMixin"
   ],
   "client": [
     "DrawContextCountMixin",

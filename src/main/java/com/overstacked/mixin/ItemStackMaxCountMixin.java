@@ -1,35 +1,30 @@
 package com.overstacked.mixin;
 
 import com.overstacked.config.OverstackedConfig;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemInstance;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/**
- * Overrides {@link ItemStack#getMaxStackSize()} to return our config value.
- * NO isLoaded() guard — returns hardcoded default (1B) before config loads
- * so that validate() and capCount() never reject large stacks during bootstrap.
- */
-@Mixin(ItemStack.class)
-public abstract class ItemStackMaxCountMixin {
+@Mixin(ItemInstance.class)
+public interface ItemStackMaxCountMixin {
 
-    private static final int OVERSTACKED_DEFAULT = 1_000_000_000;
-
-    @Inject(method = "getMaxCount", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "getMaxStackSize", at = @At("RETURN"), cancellable = true)
     private void overstacked$overrideMaxCount(CallbackInfoReturnable<Integer> cir) {
         OverstackedConfig config = OverstackedConfig.getInstance();
 
         int max;
         if (config.isLoaded()) {
-            ItemStack self = (ItemStack) (Object) this;
-            max = config.getMaxStackSize(self.getItem());
+            ItemInstance self = (ItemInstance) this;
+            Item item = self.typeHolder().value();
+            max = config.getMaxStackSize(item);
         } else {
-            max = OVERSTACKED_DEFAULT;
+            max = 1_000_000_000;
         }
 
-        if (max != cir.getReturnValue()) {
+        if (max != cir.getReturnValueI()) {
             cir.setReturnValue(max);
         }
     }

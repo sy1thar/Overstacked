@@ -11,19 +11,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemStack.class)
 public class ItemStackPacketCodecMixin {
 
-    /**
-     * Убираем ограничение сетевого пакета при передаче ItemStack между клиентом и сервером.
-     * В 1.21.1 количество передается через VarInt, поэтому нам нужно просто разрешить
-     * чтение и запись значений вплоть до Integer.MAX_VALUE.
-     */
-    @Inject(method = "createExtraValidatingPacketCodec", at = @At("RETURN"), cancellable = true)
-    private static void overstacked$expandPacketCodec(CallbackInfoReturnable<StreamCodec<RegistryFriendlyByteBuf, ItemStack>> cir) {
+    @Inject(method = "validatedStreamCodec", at = @At("RETURN"), cancellable = true)
+    private static void overstacked$expandPacketCodec(
+            StreamCodec<RegistryFriendlyByteBuf, ItemStack> codec,
+            CallbackInfoReturnable<StreamCodec<RegistryFriendlyByteBuf, ItemStack>> cir) {
         StreamCodec<RegistryFriendlyByteBuf, ItemStack> original = cir.getReturnValue();
-        
+
         StreamCodec<RegistryFriendlyByteBuf, ItemStack> expanded = new StreamCodec<>() {
             @Override
             public ItemStack decode(RegistryFriendlyByteBuf buf) {
-                // Позволяем ванильному декодеру работать без краша при больших числах
                 try {
                     return original.decode(buf);
                 } catch (Exception e) {
@@ -36,7 +32,7 @@ public class ItemStackPacketCodecMixin {
                 original.encode(buf, stack);
             }
         };
-        
+
         cir.setReturnValue(expanded);
     }
 }

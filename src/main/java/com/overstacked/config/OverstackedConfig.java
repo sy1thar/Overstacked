@@ -5,33 +5,33 @@ import com.overstacked.network.ConfigSyncPayload;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.FishingRodItem;
+import net.minecraft.world.item.FlintAndSteelItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.MaceItem;
+import net.minecraft.world.item.ProjectileWeaponItem;
+import net.minecraft.world.item.ShearsItem;
+import net.minecraft.world.item.ShieldItem;
+import net.minecraft.world.item.TridentItem;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.FishingRodItem;
-import net.minecraft.world.item.FlintAndSteelItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ProjectileWeaponItem;
-import net.minecraft.world.item.ShearsItem;
-import net.minecraft.world.item.ShieldItem;
-import net.minecraft.world.item.SwordItem;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.TridentItem;
 
 public final class OverstackedConfig {
 
@@ -63,10 +63,6 @@ public final class OverstackedConfig {
     );
     private static final Set<String> TOTEM_GROUP = Set.of("minecraft:totem_of_undying");
 
-    private static final TagKey<Item> ENCHANTABLE_WEAPON = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("minecraft", "enchantable/weapon"));
-    private static final TagKey<Item> ENCHANTABLE_DURABILITY = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("minecraft", "enchantable/durability"));
-    private static final TagKey<Item> ENCHANTABLE_MINING = TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath("minecraft", "enchantable/mining"));
-
     private OverstackedConfig() {}
 
     public static OverstackedConfig getInstance() {
@@ -74,10 +70,14 @@ public final class OverstackedConfig {
         return INSTANCE;
     }
 
+    private static Path getConfigDir() {
+        return FabricLoader.getInstance().getConfigDir();
+    }
+
     /* ---- lifecycle ----------------------------------------------------- */
 
     public void load() {
-        Path configDir = Paths.get("config");
+        Path configDir = getConfigDir();
         reset();
 
         loadJsonConfig(configDir.resolve("overstacked.json"));
@@ -97,7 +97,7 @@ public final class OverstackedConfig {
     }
 
     public void reloadDiskRules() {
-        Path configDir = Paths.get("config");
+        Path configDir = getConfigDir();
         tagOverrides.clear();
         itemOverrides.clear();
 
@@ -118,7 +118,7 @@ public final class OverstackedConfig {
 
     public void saveToDisk() {
         try {
-            Path path = Paths.get("config", "overstacked.json");
+            Path path = getConfigDir().resolve("overstacked.json");
             Files.createDirectories(path.getParent());
             JsonObject json = new JsonObject();
             json.addProperty("version", 2);
@@ -228,15 +228,15 @@ public final class OverstackedConfig {
 
         int vanillaMax = getVanillaMaxCount(item);
 
+        if (ENDER_PEARL_GROUP.contains(id)) return stackEnderPearlsSnowballs ? defaultMaxStackSize : vanillaMax;
+        if (BUCKET_POTION_GROUP.contains(id)) return stackBucketsPotions ? defaultMaxStackSize : vanillaMax;
+
         if (vanillaMax == 1) {
             if (ENCHANTED_BOOK_GROUP.contains(id) && stackEnchantedBooks) return defaultMaxStackSize;
             if (TOTEM_GROUP.contains(id) && stackTotems) return defaultMaxStackSize;
             if (!stackToolsArmor) return vanillaMax;
             return defaultMaxStackSize;
         }
-
-        if (ENDER_PEARL_GROUP.contains(id)) return stackEnderPearlsSnowballs ? defaultMaxStackSize : vanillaMax;
-        if (BUCKET_POTION_GROUP.contains(id)) return stackBucketsPotions ? defaultMaxStackSize : vanillaMax;
 
         return defaultMaxStackSize;
     }
@@ -306,18 +306,30 @@ public final class OverstackedConfig {
     }
 
     private static boolean isWeaponOrTool(Item item) {
-        if (item instanceof SwordItem || item instanceof TieredItem ||
-            item instanceof ArmorItem || item instanceof ProjectileWeaponItem ||
-            item instanceof ShieldItem || item instanceof TridentItem ||
-            item instanceof FishingRodItem || item instanceof ShearsItem ||
-            item instanceof FlintAndSteelItem) {
+        if (item instanceof ProjectileWeaponItem
+                || item instanceof ShieldItem || item instanceof TridentItem
+                || item instanceof FishingRodItem || item instanceof ShearsItem
+                || item instanceof FlintAndSteelItem || item instanceof MaceItem) {
+            return true;
+        }
+        if (item.components().has(DataComponents.MAX_DAMAGE)
+                || item.components().has(DataComponents.WEAPON)
+                || item.components().has(DataComponents.TOOL)) {
             return true;
         }
         Holder.Reference<Item> ref = item.builtInRegistryHolder();
-        if (ref.is(ENCHANTABLE_WEAPON) || ref.is(ENCHANTABLE_DURABILITY) || ref.is(ENCHANTABLE_MINING)) {
-            return true;
-        }
-        if (item.components().has(DataComponents.MAX_DAMAGE)) return true;
-        return false;
+        return ref.is(ItemTags.SWORDS)
+                || ref.is(ItemTags.AXES)
+                || ref.is(ItemTags.PICKAXES)
+                || ref.is(ItemTags.SHOVELS)
+                || ref.is(ItemTags.HOES)
+                || ref.is(ItemTags.HEAD_ARMOR)
+                || ref.is(ItemTags.CHEST_ARMOR)
+                || ref.is(ItemTags.LEG_ARMOR)
+                || ref.is(ItemTags.FOOT_ARMOR)
+                || ref.is(ItemTags.WEAPON_ENCHANTABLE)
+                || ref.is(ItemTags.DURABILITY_ENCHANTABLE)
+                || ref.is(ItemTags.MINING_ENCHANTABLE)
+                || ref.is(ItemTags.ARMOR_ENCHANTABLE);
     }
 }

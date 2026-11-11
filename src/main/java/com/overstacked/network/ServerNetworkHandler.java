@@ -4,6 +4,7 @@ import com.overstacked.Overstacked;
 import com.overstacked.config.OverstackedConfig;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permissions;
 
 public final class ServerNetworkHandler {
 
@@ -12,7 +13,7 @@ public final class ServerNetworkHandler {
     public static void handleMenuSubmit(MenuSubmitPayload payload, ServerPlayNetworking.Context context) {
         ServerPlayer player = context.player();
         context.server().execute(() -> {
-            if (!player.hasPermissions(2)) {
+            if (!player.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER)) {
                 ServerPlayNetworking.send(player, OverstackedConfig.getInstance().toPayload());
                 return;
             }

@@ -2,7 +2,7 @@
 
 [![en](https://img.shields.io/badge/lang-English-blue.svg)](#english) [![ru](https://img.shields.io/badge/lang-Русский-green.svg)](#русский)
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21.1-2E8B57?style=for-the-badge&logo=minecraft&logoColor=white)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1_--_26.3-2E8B57?style=for-the-badge&logo=minecraft&logoColor=white)
 ![Mod Loader](https://img.shields.io/badge/Fabric-0.16.0+-D32F2F?style=for-the-badge)
 ![API](https://img.shields.io/badge/Fabric_API-Required-1976D2?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-FBC02D?style=for-the-badge)
@@ -12,7 +12,7 @@
 <a name="english"></a>
 ## 🇬🇧 English
 
-> **Overstacked** is the ultimate stack-size overhaul mod for Minecraft 1.21.1. Break free from vanilla limits and stack items up to **1,000,000,000 (1 Billion)** per slot with intelligent UI formatting, zero-lag physics, and a powerful XML/JSON configuration engine!
+> **Overstacked** is the ultimate stack-size overhaul mod for Minecraft (1.20.1 – 26.3). Break free from vanilla limits and stack items up to **1,000,000,000 (1 Billion)** per slot with intelligent UI formatting, zero-lag physics, and a powerful XML/JSON configuration engine!
 
 ### ✨ Key Features
 
@@ -50,7 +50,7 @@ Overstacked features a flexible hybrid configuration architecture designed for b
 <a name="русский"></a>
 ## 🇷🇺 Русский
 
-> **Overstacked** — это глобальный мод на переработку размеров стаков для Minecraft 1.21.1. Забудьте про ванильное ограничение в 64 предмета! Стакайте лут вплоть до **1 000 000 000 (1 миллиарда)** штук в один слот с аккуратной отрисовкой чисел, защитой от лагов и мощной системой настройки через XML/JSON!
+> **Overstacked** — это глобальный мод на переработку размеров стаков для Minecraft (1.20.1 – 26.3). Забудьте про ванильное ограничение в 64 предмета! Стакайте лут вплоть до **1 000 000 000 (1 миллиарда)** штук в один слот с аккуратной отрисовкой чисел, защитой от лагов и мощной системой настройки через XML/JSON!
 
 ### ✨ Главные особенности
 

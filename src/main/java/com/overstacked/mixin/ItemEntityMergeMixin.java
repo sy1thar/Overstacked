@@ -11,10 +11,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMergeMixin {
 
-    @Inject(method = "canMerge", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isMergable", at = @At("HEAD"), cancellable = true)
     private void overstacked$preventLargeStackMerge(CallbackInfoReturnable<Boolean> cir) {
-        OverstackedConfig config = OverstackedConfig.getInstance();
-
         ItemEntity self = (ItemEntity) (Object) this;
         ItemStack stack = self.getItem();
         int vanillaMax = OverstackedConfig.getVanillaMaxCount(stack.getItem());
@@ -24,11 +22,9 @@ public abstract class ItemEntityMergeMixin {
         }
     }
 
-    @Inject(method = "canMerge(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Z",
+    @Inject(method = "areMergable(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemStack;)Z",
             at = @At("HEAD"), cancellable = true)
     private static void overstacked$preventLargeStackMergeStatic(ItemStack a, ItemStack b, CallbackInfoReturnable<Boolean> cir) {
-        OverstackedConfig config = OverstackedConfig.getInstance();
-
         int vanillaMax = OverstackedConfig.getVanillaMaxCount(a.getItem());
 
         if (a.getCount() > vanillaMax || b.getCount() > vanillaMax) {
